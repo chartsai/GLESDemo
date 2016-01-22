@@ -24,12 +24,14 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
             "GLES 1.0 Background",
             "GLES 1.0 Triangle",
             "GLES 1.0 Color Triangle",
+            "GLES 1.0 Projection Sample",
     };
 
     private Class[] mSampleActivity = {
             GLES1_Background_Activity.class,
             GLES1_Triangle_Activity.class,
             GLES1_ColorTriangle_Activity.class,
+            GLES1_Projection_Activity.class,
     };
 
     @Override

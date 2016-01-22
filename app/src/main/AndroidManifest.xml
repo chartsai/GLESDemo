@@ -26,6 +26,7 @@
         <activity android:name=".GLES1_PushPop_Activity"></activity>
         <activity android:name=".GLES1_Transform_Activity"></activity>
         <activity android:name=".GLES1_DepthTest_Activity"></activity>
+        <activity android:name=".GLES1_Texture_Activity"></activity>
     </application>
 
 </manifest>

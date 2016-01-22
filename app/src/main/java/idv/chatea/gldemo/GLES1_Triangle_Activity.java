@@ -63,7 +63,7 @@ public class GLES1_Triangle_Activity extends Activity {
             gl.glLoadIdentity();
 
             // When using GL_MODELVIEW, you must set the camera view
-            GLU.gluLookAt(gl, 0, 0, -5, 0f, 0f, 0f, 0f, 1.0f, 0.0f);
+            GLU.gluLookAt(gl, 0, 0, 5, 0f, 0f, 0f, 0f, 1.0f, 0.0f);
 
             gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 

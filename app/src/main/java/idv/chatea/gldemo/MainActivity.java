@@ -25,6 +25,8 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
             "GLES 1.0 Triangle",
             "GLES 1.0 Color Triangle",
             "GLES 1.0 Projection Sample",
+            "GLES 1.0 Push/Pop Sample",
+            "GLES 1.0 Transform Sample"
     };
 
     private Class[] mSampleActivity = {
@@ -32,6 +34,8 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
             GLES1_Triangle_Activity.class,
             GLES1_ColorTriangle_Activity.class,
             GLES1_Projection_Activity.class,
+            GLES1_PushPop_Activity.class,
+            GLES1_Transform_Activity.class,
     };
 
     @Override

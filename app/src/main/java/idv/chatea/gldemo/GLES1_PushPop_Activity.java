@@ -7,20 +7,21 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
-import android.widget.TextView;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
+import java.nio.ShortBuffer;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-public class GLES1_Projection_Activity extends Activity {
+public class GLES1_PushPop_Activity extends Activity {
 
     private GLSurfaceView mGLSurfaceView;
 
-    private float mCameraPositionZ;
+    private float mTrianglePositionX;
+    private float mSquarePositionX;
 
     private ProjectionMode mProjectionMode = ProjectionMode.Perspective;
     private enum ProjectionMode {
@@ -31,25 +32,21 @@ public class GLES1_Projection_Activity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_gles1_projection);
+        setContentView(R.layout.activity_gles1_pushpop);
 
         mGLSurfaceView = (GLSurfaceView)findViewById(R.id.glSurfaceView);
         mGLSurfaceView.setEGLContextClientVersion(1);
         mGLSurfaceView.setRenderer(new MyRenderer());
         mGLSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
 
-        final TextView textView = (TextView) findViewById(R.id.progressText);
-
-        SeekBar seekBar = (SeekBar) findViewById(R.id.seekBar);
-        seekBar.setMax(100);
-        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        SeekBar triangleSeekBar = (SeekBar) findViewById(R.id.triangleSeekBar);
+        triangleSeekBar.setMax(20);
+        triangleSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                // Camera's z position is between -5 and 5.
+                // Camera's z position is between -1 and 1.
                 // Accuracy: 0.1
-                mCameraPositionZ = (progress/10.0f - 5);
-                String positionString = String.format("camera at (0,0,%0.1f), look to (0,0,0)", mCameraPositionZ);
-                textView.setText(positionString);
+                mTrianglePositionX = (progress / 10.0f - 1);
             }
 
             @Override
@@ -60,7 +57,27 @@ public class GLES1_Projection_Activity extends Activity {
             public void onStopTrackingTouch(SeekBar seekBar) {
             }
         });
-        seekBar.setProgress(50);
+        triangleSeekBar.setProgress(5);
+
+        SeekBar squareSeekBar = (SeekBar) findViewById(R.id.squareSeekBar);
+        squareSeekBar.setMax(20);
+        squareSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                // Camera's z position is between -1 and 1.
+                // Accuracy: 0.1
+                mSquarePositionX = (progress / 10.0f - 1);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
+        });
+        squareSeekBar.setProgress(15);
 
         Button orthogonalButton = (Button) findViewById(R.id.orthogonalButton);
         Button perspectiveButton = (Button) findViewById(R.id.perspectiveButton);
@@ -86,11 +103,13 @@ public class GLES1_Projection_Activity extends Activity {
         private int mSurfaceHeight;
 
         private Triangle mTriangle;
+        private Square mSquare;
 
         @Override
         public void onSurfaceCreated(GL10 gl, EGLConfig config) {
 
             mTriangle = new Triangle();
+            mSquare = new Square();
 
             gl.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         }
@@ -120,17 +139,24 @@ public class GLES1_Projection_Activity extends Activity {
                     throw new IllegalStateException("Projection Mode is not set");
             }
 
-            // Set GL_MODELVIEW transformation mode
             gl.glMatrixMode(GL10.GL_MODELVIEW);
-            // reset the matrix to its default state
             gl.glLoadIdentity();
 
-            // When using GL_MODELVIEW, you must set the camera view
-            GLU.gluLookAt(gl, 0, 0, mCameraPositionZ, 0f, 0f, 0f, 0f, 1.0f, 0.0f);
+            GLU.gluLookAt(gl, 0, 0, 5, 0f, 0f, 0f, 0f, 1.0f, 0.0f);
 
             gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
+            /** Draw Object **/
+
+            gl.glPushMatrix();
+            gl.glTranslatef(mTrianglePositionX, 0.0f, 0.0f);
             mTriangle.draw(gl);
+            gl.glPopMatrix();
+
+            gl.glPushMatrix();
+            gl.glTranslatef(mSquarePositionX, 0.0f, 0.0f);
+            mSquare.draw(gl);
+            gl.glPopMatrix();
         }
     }
 
@@ -187,6 +213,73 @@ public class GLES1_Projection_Activity extends Activity {
             gl.glDrawArrays(    // draw shape:
                     GL10.GL_TRIANGLES, 0,
                     triangleCoords.length / COORDS_PER_VERTEX);
+
+            // Disable vertex array drawing to avoid
+            // conflicts with shapes that don't use it
+            gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
+        }
+    }
+
+    public static class Square {
+
+        private final FloatBuffer vertexBuffer;
+        private final ShortBuffer drawListBuffer;
+
+        // number of coordinates per vertex in this array
+        static final int COORDS_PER_VERTEX = 3;
+        static float squareCoords[] = {
+                -0.5f,  0.5f, 0.0f,   // top left
+                -0.5f, -0.5f, 0.0f,   // bottom left
+                0.5f, -0.5f, 0.0f,   // bottom right
+                0.5f,  0.5f, 0.0f }; // top right
+
+        private final short drawOrder[] = { 0, 1, 2, 0, 2, 3 }; // order to draw vertices
+
+        float color[] = { 0.2f, 0.709803922f, 0.898039216f, 1.0f };
+
+        /**
+         * Sets up the drawing object data for use in an OpenGL ES context.
+         */
+        public Square() {
+            // initialize vertex byte buffer for shape coordinates
+            ByteBuffer bb = ByteBuffer.allocateDirect(
+                    // (# of coordinate values * 4 bytes per float)
+                    squareCoords.length * 4);
+            bb.order(ByteOrder.nativeOrder());
+            vertexBuffer = bb.asFloatBuffer();
+            vertexBuffer.put(squareCoords);
+            vertexBuffer.position(0);
+
+            // initialize byte buffer for the draw list
+            ByteBuffer dlb = ByteBuffer.allocateDirect(
+                    // (# of coordinate values * 2 bytes per short)
+                    drawOrder.length * 2);
+            dlb.order(ByteOrder.nativeOrder());
+            drawListBuffer = dlb.asShortBuffer();
+            drawListBuffer.put(drawOrder);
+            drawListBuffer.position(0);
+        }
+
+        /**
+         * Encapsulates the OpenGL ES instructions for drawing this shape.
+         *
+         * @param gl - The OpenGL ES context in which to draw this shape.
+         */
+        public void draw(GL10 gl) {
+            // Since this shape uses vertex arrays, enable them
+            gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
+
+            // draw the shape
+            gl.glColor4f(       // set color
+                    color[0], color[1],
+                    color[2], color[3]);
+            gl.glVertexPointer( // point to vertex data:
+                    COORDS_PER_VERTEX,
+                    GL10.GL_FLOAT, 0, vertexBuffer);
+            gl.glDrawElements(  // draw shape:
+                    GL10.GL_TRIANGLES,
+                    drawOrder.length, GL10.GL_UNSIGNED_SHORT,
+                    drawListBuffer);
 
             // Disable vertex array drawing to avoid
             // conflicts with shapes that don't use it

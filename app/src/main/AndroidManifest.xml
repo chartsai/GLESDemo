@@ -23,6 +23,8 @@
         <activity android:name=".GLES1_Triangle_Activity"></activity>
         <activity android:name=".GLES1_ColorTriangle_Activity"></activity>
         <activity android:name=".GLES1_Projection_Activity"></activity>
+        <activity android:name=".GLES1_PushPop_Activity"></activity>
+        <activity android:name=".GLES1_Transform_Activity"></activity>
     </application>
 
 </manifest>

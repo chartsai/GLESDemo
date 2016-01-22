@@ -12,8 +12,6 @@ import javax.microedition.khronos.opengles.GL10;
 
 public class GLES1_Background_Activity extends Activity {
 
-    private GLSurfaceView mGLSurfaceView;
-
     // clear colors
     private float mR;
     private float mG;
@@ -25,10 +23,10 @@ public class GLES1_Background_Activity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gles1_background);
 
-        mGLSurfaceView = (GLSurfaceView)findViewById(R.id.glSurfaceView);
-        mGLSurfaceView.setEGLContextClientVersion(1);
-        mGLSurfaceView.setRenderer(new MyRenderer());
-        mGLSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
+        GLSurfaceView glSurfaceView = (GLSurfaceView) findViewById(R.id.glSurfaceView);
+        glSurfaceView.setEGLContextClientVersion(1);
+        glSurfaceView.setRenderer(new MyRenderer());
+        glSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
 
         Button redButton = (Button) findViewById(R.id.redButton);
         Button greenButton = (Button) findViewById(R.id.greenButton);

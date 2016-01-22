@@ -18,8 +18,6 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
 
     private static final String TITLE = "title";
 
-    private ListView mListView;
-
     private String[] mSampleTitle = {
             "GLES 1.0 Background",
             "GLES 1.0 Triangle",
@@ -43,15 +41,15 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mListView = (ListView) findViewById(R.id.listView);
+        ListView listView = (ListView) findViewById(R.id.listView);
 
         List<Map<String, Object>> items = createListItems();
         ListAdapter adapter = new SimpleAdapter(this, items, android.R.layout.simple_list_item_1,
                 new String[] {TITLE}, new int[] {android.R.id.text1});
 
-        mListView.setAdapter(adapter);
+        listView.setAdapter(adapter);
 
-        mListView.setOnItemClickListener(this);
+        listView.setOnItemClickListener(this);
     }
 
     private List<Map<String, Object>> createListItems() {

@@ -21,6 +21,7 @@
         </activity>
         <activity android:name=".GLES1_Background_Activity"></activity>
         <activity android:name=".GLES1_Triangle_Activity"></activity>
+        <activity android:name=".GLES1_Viewport_Activity"></activity>
         <activity android:name=".GLES1_ColorTriangle_Activity"></activity>
         <activity android:name=".GLES1_Projection_Activity"></activity>
         <activity android:name=".GLES1_PushPop_Activity"></activity>

@@ -41,7 +41,7 @@ public class ColorTriangle {
         vertexBuffer.put(triangleCoords);
         vertexBuffer.position(0);
 
-        /** Init color buffer **/
+        /** Init colorList buffer **/
         ByteBuffer cbb = ByteBuffer.allocateDirect(colors.length * 4);
         cbb.order(ByteOrder.nativeOrder());
         colorBuffer = cbb.asFloatBuffer();

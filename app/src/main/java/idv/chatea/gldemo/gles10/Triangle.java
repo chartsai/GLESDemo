@@ -50,7 +50,7 @@ public class Triangle {
         gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
 
         // draw the shape
-        gl.glColor4f(       // set color:
+        gl.glColor4f(       // set colorList:
                 color[0], color[1],
                 color[2], color[3]);
         gl.glVertexPointer( // point to vertex data:

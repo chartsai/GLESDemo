@@ -21,6 +21,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
     private String[] mSampleTitle = {
             "GLES 1.0 Background Sample",
             "GLES 1.0 Triangle Sample",
+            "GLES 1.0 Drawing Mode Sample",
             "GLES 1.0 Viewport Sample",
             "GLES 1.0 Color Triangle Sample",
             "GLES 1.0 Projection Sample",
@@ -34,6 +35,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
     private Class[] mSampleActivity = {
             GLES1_Background_Activity.class,
             GLES1_Triangle_Activity.class,
+            GLES1_DrawElements_Activity.class,
             GLES1_Viewport_Activity.class,
             GLES1_ColorTriangle_Activity.class,
             GLES1_Projection_Activity.class,

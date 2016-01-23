@@ -115,7 +115,7 @@ public class TextureSquare {
         gl.glBindTexture(GL10.GL_TEXTURE_2D, textures[0]);
 
         // draw the shape
-        gl.glColor4f(       // set color
+        gl.glColor4f(       // set colorList
                 color[0], color[1],
                 color[2], color[3]);
         gl.glVertexPointer( // point to vertex data:

@@ -30,6 +30,8 @@
         <activity android:name=".GLES1_DepthTest_Activity"></activity>
         <activity android:name=".GLES1_Blending_Activity"></activity>
         <activity android:name=".GLES1_Texture_Activity"></activity>
+        <activity android:name=".GLES2_Ball_Activity"></activity>
+        <activity android:name=".GLES2_BlockBall_Activity"></activity>
     </application>
 
 </manifest>

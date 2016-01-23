@@ -30,6 +30,8 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
             "GLES 1.0 Depth Test Sample",
             "GLES 1.0 Blending Sample",
             "GLES 1.0 Texture Sample",
+            "GLES 2.0 Ball Sample",
+            "GLES 2.0 Block Ball Sample",
     };
 
     private Class[] mSampleActivity = {
@@ -44,6 +46,8 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
             GLES1_DepthTest_Activity.class,
             GLES1_Blending_Activity.class,
             GLES1_Texture_Activity.class,
+            GLES2_Ball_Activity.class,
+            GLES2_BlockBall_Activity.class,
     };
 
     @Override

@@ -44,7 +44,7 @@ public class GLES1_Projection_Activity extends Activity {
                 // Camera's z position is between -5 and 5.
                 // Accuracy: 0.1
                 mCameraPositionZ = (progress/10.0f - 5);
-                String positionString = String.format("camera at (0,0,%0.1f), look to (0,0,0)", mCameraPositionZ);
+                String positionString = String.format("camera at (0,0,%.1f), look to (0,0,0)", mCameraPositionZ);
                 textView.setText(positionString);
             }
 

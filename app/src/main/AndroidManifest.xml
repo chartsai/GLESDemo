@@ -2,9 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="idv.chatea.gldemo">
 
-    <uses-feature android:glEsVersion="0x00010000" android:required="true" />
-    <uses-feature android:glEsVersion="0x00020000" android:required="true" />
-    <uses-feature android:glEsVersion="0x00030000" android:required="true" />
+    <uses-feature
+        android:glEsVersion="0x00010000"
+        android:required="true" />
+    <uses-feature
+        android:glEsVersion="0x00030000"
+        android:required="true" />
 
     <application
         android:allowBackup="true"
@@ -19,19 +22,20 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".GLES1_Background_Activity"></activity>
-        <activity android:name=".GLES1_Triangle_Activity"></activity>
-        <activity android:name=".GLES1_DrawElements_Activity"></activity>
-        <activity android:name=".GLES1_Viewport_Activity"></activity>
-        <activity android:name=".GLES1_ColorTriangle_Activity"></activity>
-        <activity android:name=".GLES1_Projection_Activity"></activity>
-        <activity android:name=".GLES1_PushPop_Activity"></activity>
-        <activity android:name=".GLES1_Transform_Activity"></activity>
-        <activity android:name=".GLES1_DepthTest_Activity"></activity>
-        <activity android:name=".GLES1_Blending_Activity"></activity>
-        <activity android:name=".GLES1_Texture_Activity"></activity>
-        <activity android:name=".GLES2_Ball_Activity"></activity>
-        <activity android:name=".GLES2_BlockBall_Activity"></activity>
+        <activity android:name=".GLES1_Background_Activity" />
+        <activity android:name=".GLES1_Triangle_Activity" />
+        <activity android:name=".GLES1_DrawElements_Activity" />
+        <activity android:name=".GLES1_Viewport_Activity" />
+        <activity android:name=".GLES1_ColorTriangle_Activity" />
+        <activity android:name=".GLES1_Projection_Activity" />
+        <activity android:name=".GLES1_PushPop_Activity" />
+        <activity android:name=".GLES1_Transform_Activity" />
+        <activity android:name=".GLES1_DepthTest_Activity" />
+        <activity android:name=".GLES1_Blending_Activity" />
+        <activity android:name=".GLES1_Texture_Activity" />
+        <activity android:name=".GLES2_Ball_Activity" />
+        <activity android:name=".GLES2_BlockBall_Activity" />
+        <activity android:name=".GLES1_Maxwell_Triangle_Activity"></activity>
     </application>
 
 </manifest>

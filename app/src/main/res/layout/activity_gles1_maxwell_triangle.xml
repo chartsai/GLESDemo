@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".GLES1_Maxwell_Triangle_Activity">
+
+    <android.opengl.GLSurfaceView
+        android:id="@+id/glSurfaceView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:orientation="horizontal"
+        android:background="@android:color/white"
+        android:layout_weight="0">
+
+        <TextView
+            android:id="@+id/colorValueTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Please touch the triangle"
+            android:layout_weight="1"
+            android:textSize="16sp"/>
+
+        <CheckBox
+            android:id="@+id/hexCheckBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Hex"
+            android:layout_weight="3"/>
+
+    </LinearLayout>
+
+</LinearLayout>

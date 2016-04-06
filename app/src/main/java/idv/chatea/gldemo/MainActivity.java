@@ -18,38 +18,31 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
 
     private static final String TITLE = "title";
 
-    private String[] mSampleTitle = {
-            "GLES 1.0 Background Sample",
-            "GLES 1.0 Triangle Sample",
-            "GLES 1.0 Drawing Mode Sample",
-            "GLES 1.0 Viewport Sample",
-            "GLES 1.0 Color Triangle Sample",
-            "GLES 1.0 Maxwell Triangle Sample",
-            "GLES 1.0 Projection Sample",
-            "GLES 1.0 Push/Pop Sample",
-            "GLES 1.0 Transform Sample",
-            "GLES 1.0 Depth Test Sample",
-            "GLES 1.0 Blending Sample",
-            "GLES 1.0 Texture Sample",
-            "GLES 2.0 Ball Sample",
-            "GLES 2.0 Block Ball Sample",
-    };
+    private static class Sample {
+        private String title;
+        private Class klass;
 
-    private Class[] mSampleActivity = {
-            GLES1_Background_Activity.class,
-            GLES1_Triangle_Activity.class,
-            GLES1_DrawElements_Activity.class,
-            GLES1_Viewport_Activity.class,
-            GLES1_ColorTriangle_Activity.class,
-            GLES1_Maxwell_Triangle_Activity.class,
-            GLES1_Projection_Activity.class,
-            GLES1_PushPop_Activity.class,
-            GLES1_Transform_Activity.class,
-            GLES1_DepthTest_Activity.class,
-            GLES1_Blending_Activity.class,
-            GLES1_Texture_Activity.class,
-            GLES2_Ball_Activity.class,
-            GLES2_BlockBall_Activity.class,
+        public Sample(String title, Class klass) {
+            this.title = title;
+            this.klass = klass;
+        }
+    }
+
+    private static final Sample[] mSamples = {
+            new Sample("GLES 1.0 Background Sample", GLES1_Background_Activity.class),
+            new Sample("GLES 1.0 Triangle Sample", GLES1_Triangle_Activity.class),
+            new Sample("GLES 1.0 Drawing Mode Sample", GLES1_DrawElements_Activity.class),
+            new Sample("GLES 1.0 Viewport Sample", GLES1_Viewport_Activity.class),
+            new Sample("GLES 1.0 Color Triangle Sample", GLES1_ColorTriangle_Activity.class),
+            new Sample("GLES 1.0 Maxwell Triangle Sample", GLES1_Maxwell_Triangle_Activity.class),
+            new Sample("GLES 1.0 Projection Sample", GLES1_Projection_Activity.class),
+            new Sample("GLES 1.0 Push/Pop Sample", GLES1_PushPop_Activity.class),
+            new Sample("GLES 1.0 Transform Sample", GLES1_Transform_Activity.class),
+            new Sample("GLES 1.0 Depth Test Sample", GLES1_DepthTest_Activity.class),
+            new Sample("GLES 1.0 Blending Sample", GLES1_Blending_Activity.class),
+            new Sample("GLES 1.0 Texture Sample", GLES1_Texture_Activity.class),
+            new Sample("GLES 2.0 Ball Sample", GLES2_Ball_Activity.class),
+            new Sample("GLES 2.0 Block Ball Sample", GLES2_BlockBall_Activity.class),
     };
 
     @Override
@@ -70,9 +63,9 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
 
     private List<Map<String, Object>> createListItems() {
         List<Map<String, Object>> items = new ArrayList();
-        for (int i = 0; i < mSampleTitle.length; i++) {
+        for (int i = 0; i < mSamples.length; i++) {
             Map<String, Object> map = new HashMap<>();
-            map.put(TITLE, mSampleTitle[i]);
+            map.put(TITLE, mSamples[i].title);
             items.add(map);
         }
         return items;
@@ -80,7 +73,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Intent intent = new Intent(this, mSampleActivity[position]);
+        Intent intent = new Intent(this, mSamples[position].klass);
         startActivity(intent);
     }
 }

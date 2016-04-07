@@ -5,6 +5,8 @@
     <uses-feature android:glEsVersion="0x00010000" android:required="true" />
     <uses-feature android:glEsVersion="0x00020000" android:required="true" />
 
+    <uses-permission android:name="android.permission.VIBRATE" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -35,6 +37,7 @@
         <activity android:name=".GLES2_Maxwell_Triangle_Activity" />
         <activity android:name=".GLES2_Vertex_Buffer_Activity" />
         <activity android:name=".GLES2_Use_GLBuffer_Activity" />
+        <activity android:name=".GLES2_Firework_Activity" />
     </application>
 
 </manifest>

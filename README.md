@@ -11,6 +11,9 @@ USed to demo basic GLES feature.
 ## Usage
 Please use Android Studio to import this project.
 
+## Environment
+Android Studio 2.0
+
 ## Dependency
 com.android.support:appcompat-v7:23.1.1
 

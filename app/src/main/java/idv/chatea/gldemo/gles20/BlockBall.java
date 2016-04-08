@@ -130,7 +130,7 @@ public class BlockBall {
     }
 
     private void initShader() {
-        mProgram = GLUtils.createProgram(vertexShaderCode, fragmentShaderCode);
+        mProgram = Utils.createProgram(vertexShaderCode, fragmentShaderCode);
     }
 
     public void draw(float[] mvpMatrix) {

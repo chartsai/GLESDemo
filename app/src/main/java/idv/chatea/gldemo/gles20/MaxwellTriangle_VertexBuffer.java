@@ -80,7 +80,7 @@ public class MaxwellTriangle_VertexBuffer {
         mIndexBuffer.put(mIndexData);
         mIndexBuffer.position(0);
 
-        mProgram = GLUtils.createProgram(VERTEX_CODE, FRAGMENT_CODE);
+        mProgram = Utils.createProgram(VERTEX_CODE, FRAGMENT_CODE);
 
         mMVPMatrixHandler = GLES20.glGetUniformLocation(mProgram, "uMVPMatrix");
         mPositionHandle = GLES20.glGetAttribLocation(mProgram, "aPosition");

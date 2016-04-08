@@ -3,9 +3,9 @@ package idv.chatea.gldemo.gles20;
 import android.opengl.GLES20;
 import android.util.Log;
 
-public class GLUtils {
+public class Utils {
 
-    private static final String TAG = GLUtils.class.getSimpleName();
+    private static final String TAG = Utils.class.getSimpleName();
 
     public static int loadShader(int shaderType, String source) {
         int shader = GLES20.glCreateShader(shaderType);

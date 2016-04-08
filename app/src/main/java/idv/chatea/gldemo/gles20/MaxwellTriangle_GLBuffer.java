@@ -121,7 +121,7 @@ public class MaxwellTriangle_GLBuffer {
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0);
         GLES20.glBindBuffer(GLES20.GL_ELEMENT_ARRAY_BUFFER, 0);
 
-        mProgram = GLUtils.createProgram(VERTEX_CODE, FRAGMENT_CODE);
+        mProgram = Utils.createProgram(VERTEX_CODE, FRAGMENT_CODE);
 
         mMVPMatrixHandler = GLES20.glGetUniformLocation(mProgram, "uMVPMatrix");
         mPositionHandle = GLES20.glGetAttribLocation(mProgram, "aPosition");

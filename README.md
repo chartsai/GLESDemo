@@ -6,7 +6,8 @@ USed to demo basic GLES feature.
 ![Screen Shot 0](/screen_shots/screen_shot0.png)
 ![Screen Shot 1](/screen_shots/screen_shot1.png)
 ![Screen Shot 2](/screen_shots/screen_shot2.png)
-![Screen Shot 3](/screen_shots/screen_shot_firework0.png)
+![Screen Shot 3](/screen_shots/screen_shot3.png)
+![Screen Shot 4](/screen_shots/screen_shot_firework0.png)
 
 ## Usage
 Please use Android Studio to import this project.

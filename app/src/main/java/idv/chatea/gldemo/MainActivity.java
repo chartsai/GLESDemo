@@ -49,6 +49,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
             new Sample("GLES 2.0 Draw Texture Sample", GLES2_Texture_Activity.class),
             new Sample("GLES 2.0 Draw Transparent Texture", GLES2_Transparent_Texture_Activity.class),
             new Sample("GLES 2.0 Firework Sample", GLES2_Firework_Activity.class),
+            new Sample("GLES 2.0 Pixelated Picture Sample", GLES2_Pixelated_Picture_Activity.class),
     };
 
     @Override

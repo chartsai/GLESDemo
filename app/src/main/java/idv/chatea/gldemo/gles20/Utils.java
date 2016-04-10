@@ -1,7 +1,11 @@
 package idv.chatea.gldemo.gles20;
 
+import android.content.Context;
 import android.opengl.GLES20;
 import android.util.Log;
+
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 
 public class Utils {
 
@@ -54,6 +58,29 @@ public class Utils {
             }
         }
         return program;
+    }
+
+    public static String loadFromAssetsFile(Context context, String fileName) {
+        context.getAssets();
+
+        String result=null;
+        try {
+            InputStream is = context.getAssets().open(fileName);
+            int ch;
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            while ((ch = is.read()) != -1) {
+                baos.write(ch);
+            }
+            byte[] buff = baos.toByteArray();
+            baos.close();
+            is.close();
+            result = new String(buff, "UTF-8");
+            result = result.replaceAll("\\r\\n", "\\n");
+            result = result.replaceAll("\\n", "\n");
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
     public static void checkGlError(String op) {

@@ -1,5 +1,6 @@
 package idv.chatea.gldemo;
 
+import android.content.Context;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
@@ -10,9 +11,11 @@ import android.view.MotionEvent;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-import idv.chatea.gldemo.gles20.light.LightCube;
+import idv.chatea.gldemo.gles20.light.Light;
+import idv.chatea.gldemo.gles20.light.LightObjObject;
+import idv.chatea.gldemo.objloader.ObjLoader;
 
-public class GLES2_Light_Cube_Activity extends AppCompatActivity {
+public class GLES2_Light_Obj_Activity extends AppCompatActivity {
 
     private GLSurfaceView mGLSurfaceView;
     private MyRenderer mRenderer;
@@ -27,7 +30,7 @@ public class GLES2_Light_Cube_Activity extends AppCompatActivity {
         mGLSurfaceView.setEGLContextClientVersion(2);
         mRenderer = new MyRenderer();
         mGLSurfaceView.setRenderer(mRenderer);
-        mGLSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+        mGLSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
         setContentView(mGLSurfaceView);
     }
 
@@ -57,17 +60,29 @@ public class GLES2_Light_Cube_Activity extends AppCompatActivity {
         private static final float MOVEMENT_FACTOR_PHI = 90.0f / 320;
 
         private float[] mEyePoint = new float[3];
-        private float mViewDistance = 5;
+        private float mViewDistance = 200;
         private float mTheta = 90;
         private float mPhi = 0;
 
-        private LightCube mCube;
+        private LightObjObject mLightObjObject;
+
+        private Light mLight;
 
         @Override
         public void onSurfaceCreated(GL10 unused, EGLConfig config) {
-            GLES20.glClearColor(0.4f, 0.4f, 0.4f, 1.0f);
+            GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+            GLES20.glEnable(GLES20.GL_DEPTH_TEST);
 
-            mCube = new LightCube();
+            Context context = GLES2_Light_Obj_Activity.this;
+
+            ObjLoader loader = new ObjLoader();
+
+            mLightObjObject = new LightObjObject(context, loader.loadObjFile(context, "teapot/teapot.obj"));
+            mLight = new Light();
+            mLight.position = new float[]{200, 200, 200, 1.0f};
+            mLight.ambientChannel = new float[]{0.15f, 0.15f, 0.15f, 1.0f};
+            mLight.diffusionChannel = new float[]{0.3f, 0.3f, 0.3f, 1.0f};
+            mLight.specularChannel = new float[]{0.4f, 0.4f, 0.4f, 1.0f};
         }
 
         @Override
@@ -88,7 +103,7 @@ public class GLES2_Light_Cube_Activity extends AppCompatActivity {
             Matrix.setLookAtM(mViewMatrix, 0,
                     mEyePoint[0], mEyePoint[1], mEyePoint[2],
                     0f, 0f, 0f,
-                    0f, 0f, mTheta % 360 < 180 ? 1.0f : -1.0f);
+                    0f, mTheta % 360 < 180 ? 1.0f : -1.0f, 0f);
 
             float[] mvpMatrix = new float[16];
 
@@ -97,20 +112,17 @@ public class GLES2_Light_Cube_Activity extends AppCompatActivity {
 
             float[] moduleMatrix = new float[16];
             Matrix.setIdentityM(moduleMatrix, 0);
-
-            Matrix.setRotateEulerM(moduleMatrix, 0, 270, 0, 90);
+            Matrix.translateM(moduleMatrix, 0, 0, -50, 0);
 
             Matrix.multiplyMM(mvpMatrix, 0, vpMatrix, 0, moduleMatrix, 0);
-            mCube.draw(mvpMatrix);
+            mLightObjObject.draw(mvpMatrix, mLight, mEyePoint);
         }
-
 
         public void handleDrag(final float dx, final float dy) {
             mGLSurfaceView.queueEvent(new Runnable() {
                 @Override
                 public void run() {
                     mTheta -= MOVEMENT_FACTOR_THETA * dy;
-
                     while (mTheta < 0) {
                         mTheta += 360;
                     }
@@ -121,7 +133,6 @@ public class GLES2_Light_Cube_Activity extends AppCompatActivity {
                         mPhi += 360;
                     }
                     mPhi = mPhi % 360;
-                    mGLSurfaceView.requestRender();
                 }
             });
         }
@@ -132,9 +143,10 @@ public class GLES2_Light_Cube_Activity extends AppCompatActivity {
 
             double radianceTheta = theta * Math.PI / 180;
             double radiancePhi = phi * Math.PI / 180;
-            mEyePoint[0] = (float) (mViewDistance * Math.sin(radianceTheta) * Math.cos(radiancePhi));
-            mEyePoint[1] = (float) (mViewDistance * Math.sin(radianceTheta) * Math.sin(radiancePhi));
-            mEyePoint[2] = (float) (mViewDistance * Math.cos(radianceTheta));
+
+            mEyePoint[0] = (float) (mViewDistance * Math.sin(radianceTheta) * Math.sin(radiancePhi));
+            mEyePoint[1] = (float) (mViewDistance * Math.cos(radianceTheta));
+            mEyePoint[2] = (float) (mViewDistance * Math.sin(radianceTheta) * Math.cos(radiancePhi));
         }
     }
 }

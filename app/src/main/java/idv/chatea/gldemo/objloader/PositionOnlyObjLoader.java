@@ -2,7 +2,7 @@ package idv.chatea.gldemo.objloader;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.widget.Toast;
+import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -10,20 +10,32 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-public class IndexingObjLoader implements ObjLoader {
+/**
+ * This loader only load position data.
+ * Because it only load position data, it can be render by glDrawElements.
+ */
+public class PositionOnlyObjLoader {
+    private static final String TAG = PositionOnlyObjLoader.class.getSimpleName();
 
     private static final int[] FIRST_TRIANGLE_ORDER = {1, 2, 3};
     private static final int[] SECOND_TRIANGLE_ORDER = {1, 3, 4};
 
     /**
-     * The returned object only has vertex data.
-     * Use {@link android.opengl.GLES20.glDrawElements();} with index data to render.
+     * This position data is for glDrawElements.
+     */
+    public static class ObjPositionData {
+        public float[] positions;
+        public int[] indices;
+    }
+
+    /**
+     * The returned object has position and index data.
+     * Use glDrawElements() to render it.
      * @param context
-     * @param fileName
+     * @param fileName The pull-path file name in assets.
      * @return
      */
-    @Override
-    public ObjData loadObjFile(Context context, String fileName) {
+    public ObjPositionData loadObjFile(Context context, String fileName) {
         Resources r = context.getResources();
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(r.getAssets().open(fileName)));
@@ -51,9 +63,6 @@ public class IndexingObjLoader implements ObjLoader {
                                 index = index + vertexCounter;
                             }
                             indices.add(index);
-
-                            /** TODO vertexDataString[1] is for vt */
-                            /** TODO vertexDataString[2] is for vn */
                         }
                         if (data.length == 5) { // 4 vertices per surface (compatible to OpenGL)
                             for (int i: SECOND_TRIANGLE_ORDER) {
@@ -66,41 +75,31 @@ public class IndexingObjLoader implements ObjLoader {
                                     index = index + vertexCounter;
                                 }
                                 indices.add(index);
-
-                                /** TODO vertexDataString[1] is for vt */
-                                /** TODO vertexDataString[2] is for vn */
                             }
                         }
                         break;
-                    case "vt":
-                        // TODO implement texture
-                        break;
-                    case "vn":
-                        // TODO implement normal
-                        break;
                     default:
-                        // Others, do nothing so far.
+                        /** position only, ignore other **/
                         break;
                 }
             }
-            ObjData objData = new ObjData();
+            ObjPositionData objData = new ObjPositionData();
 
             float[] vertexData = new float[vertices.size()];
             for (int i = 0; i < vertices.size(); i++) {
                 vertexData[i] = vertices.get(i);
             }
-            objData.vertexData = vertexData;
+            objData.positions = vertexData;
 
             int[] indexData = new int[indices.size()];
             for (int i = 0; i < indices.size(); i++) {
                 indexData[i] = indices.get(i);
             }
-            objData.indexData = indexData;
+            objData.indices = indexData;
 
             return objData;
         } catch (IOException e) {
-            e.printStackTrace();
-            Toast.makeText(context, "Cannot load Obj file", Toast.LENGTH_SHORT).show();
+            Log.d(TAG, "Cannot load Obj file");
             return null;
         }
     }

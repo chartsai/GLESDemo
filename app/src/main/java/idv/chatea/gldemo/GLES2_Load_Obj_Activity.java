@@ -10,9 +10,8 @@ import android.view.MotionEvent;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-import idv.chatea.gldemo.gles20.ObjObject;
-import idv.chatea.gldemo.objloader.IndexingObjLoader;
-import idv.chatea.gldemo.objloader.ObjLoader;
+import idv.chatea.gldemo.gles20.ObjPositionObject;
+import idv.chatea.gldemo.objloader.PositionOnlyObjLoader;
 
 /**
  * TODO load normal (with lighting effects) and load texture
@@ -66,16 +65,16 @@ public class GLES2_Load_Obj_Activity extends AppCompatActivity {
         private float mTheta = 90;
         private float mPhi = 0;
 
-        private ObjObject mObjObject;
+        private ObjPositionObject mObjObject;
 
         @Override
         public void onSurfaceCreated(GL10 unused, EGLConfig config) {
             GLES20.glClearColor(0.4f, 0.4f, 0.4f, 1.0f);
             GLES20.glEnable(GLES20.GL_DEPTH_TEST);
 
-            ObjLoader loader = new IndexingObjLoader();
+            PositionOnlyObjLoader loader = new PositionOnlyObjLoader();
 
-            mObjObject = new ObjObject(loader.loadObjFile(GLES2_Load_Obj_Activity.this, "teapot/teapot.obj"));
+            mObjObject = new ObjPositionObject(loader.loadObjFile(GLES2_Load_Obj_Activity.this, "teapot/teapot.obj"));
         }
 
         @Override

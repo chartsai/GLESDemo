@@ -29,7 +29,7 @@ public class LightActivity extends Activity implements AdapterView.OnItemClickLi
     }
 
     private static final Sample[] mSamples = {
-            new Sample("GLES 2.0 Light Cube Sample", GLES2_Light_Cube_Activity.class),
+            new Sample("GLES 2.0 Light Cube Sample", GLES2_Light_Obj_Activity.class),
     };
 
     @Override

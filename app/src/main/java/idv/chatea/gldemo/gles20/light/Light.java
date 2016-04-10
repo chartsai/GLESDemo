@@ -8,7 +8,7 @@ public class Light {
 
     public float[] ambientChannel = new float[4];
     public float[] diffusionChannel = new float[4];
-    public float[] specularChannle = new float[4];
+    public float[] specularChannel = new float[4];
 
     // TODO geometric diffusion channel and specular channel
 }

@@ -5,9 +5,9 @@ import android.opengl.GLES20;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
-import idv.chatea.gldemo.objloader.ObjLoader;
+import idv.chatea.gldemo.objloader.PositionOnlyObjLoader;
 
-public class ObjObject {
+public class ObjPositionObject {
     private static final String VERTEX_CODE =
             "uniform mat4 uMVPMatrix;" +
             "attribute vec3 aPosition;" +
@@ -42,13 +42,13 @@ public class ObjObject {
     private int mMVPMatrixHandler;
     private int mPositionHandle;
 
-    public ObjObject(ObjLoader.ObjData objData) {
-        float[] vertexData = objData.vertexData;
-        int[] indexData = objData.indexData;
+    public ObjPositionObject(PositionOnlyObjLoader.ObjPositionData objData) {
+        float[] positionDataData = objData.positions;
+        int[] indexData = objData.indices;
 
-        ByteBuffer vbb = ByteBuffer.allocateDirect(BYTES_PER_FLOAT * vertexData.length);
+        ByteBuffer vbb = ByteBuffer.allocateDirect(BYTES_PER_FLOAT * positionDataData.length);
         vbb.order(ByteOrder.nativeOrder());
-        vbb.asFloatBuffer().put(vertexData);
+        vbb.asFloatBuffer().put(positionDataData);
         vbb.position(0);
 
         GLES20.glGenBuffers(1, mVertexGLBuffer, 0);

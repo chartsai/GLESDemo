@@ -47,6 +47,7 @@
         <activity android:name=".GLES2_Pixelated_Picture_Activity"
             android:screenOrientation="portrait" />
         <activity android:name=".GLES2_Multiple_Texture_Activity" />
+        <activity android:name=".GLES2_Load_Obj_Activity" />
     </application>
 
 </manifest>

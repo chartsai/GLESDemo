@@ -7,19 +7,19 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 import idv.chatea.gldemo.gles20.Utils;
-import idv.chatea.gldemo.objloader.ObjLoader;
+import idv.chatea.gldemo.objloader.BasicObjLoader;
 
 public class LightObjObject {
     private static final int BYTES_PER_FLOAT = Float.SIZE / Byte.SIZE;
 
-    private static final int POSITION_DATA_SIZE = ObjLoader.ObjData.POSITION_SIZE;
-    private static final int TEXTURE_COORD_DATA_SIZE = ObjLoader.ObjData.TEXTURE_COORD_SIZE;
-    private static final int NORMAL_DATA_SIZE = ObjLoader.ObjData.NORMAL_SIZE;
+    private static final int POSITION_DATA_SIZE = BasicObjLoader.ObjData.POSITION_SIZE;
+    private static final int TEXTURE_COORD_DATA_SIZE = BasicObjLoader.ObjData.TEXTURE_COORD_SIZE;
+    private static final int NORMAL_DATA_SIZE = BasicObjLoader.ObjData.NORMAL_SIZE;
 
-    private static final int POSITION_OFFSET = ObjLoader.ObjData.POSITION_OFFSET * BYTES_PER_FLOAT;
-    private static final int TEXTURE_COORD_OFFSET = ObjLoader.ObjData.TEXTURE_COORD_OFFSET * BYTES_PER_FLOAT;
-    private static final int NORMAL_OFFSET = ObjLoader.ObjData.NORMAL_OFFSET * BYTES_PER_FLOAT;
-    private static final int VERTEX_DATA_STRIDE = ObjLoader.ObjData.VERTEX_DATA_SIZE * BYTES_PER_FLOAT;
+    private static final int POSITION_OFFSET = BasicObjLoader.ObjData.POSITION_OFFSET * BYTES_PER_FLOAT;
+    private static final int TEXTURE_COORD_OFFSET = BasicObjLoader.ObjData.TEXTURE_COORD_OFFSET * BYTES_PER_FLOAT;
+    private static final int NORMAL_OFFSET = BasicObjLoader.ObjData.NORMAL_OFFSET * BYTES_PER_FLOAT;
+    private static final int VERTEX_DATA_STRIDE = BasicObjLoader.ObjData.VERTEX_DATA_SIZE * BYTES_PER_FLOAT;
 
     private static final float[] COLOR = {0.5f, 0.5f, 0.5f, 0.5f};
 
@@ -38,9 +38,9 @@ public class LightObjObject {
     private int mEyePositionHandle;
     private int mColorHandler;
 
-    public LightObjObject(Context context, ObjLoader.ObjData objData) {
+    public LightObjObject(Context context, BasicObjLoader.ObjData objData) {
         if (!objData.hasNormal) {
-            ObjLoader.manualCalculateNormal(objData);
+            BasicObjLoader.manualCalculateNormal(objData);
         }
         float[] vertexData = objData.vertexData;
 

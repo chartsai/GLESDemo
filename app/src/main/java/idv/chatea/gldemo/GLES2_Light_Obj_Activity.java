@@ -13,7 +13,8 @@ import javax.microedition.khronos.opengles.GL10;
 
 import idv.chatea.gldemo.gles20.light.Light;
 import idv.chatea.gldemo.gles20.light.LightObjObject;
-import idv.chatea.gldemo.objloader.ObjLoader;
+import idv.chatea.gldemo.objloader.BasicObjLoader;
+import idv.chatea.gldemo.objloader.SmoothObjLoader;
 
 public class GLES2_Light_Obj_Activity extends AppCompatActivity {
 
@@ -75,7 +76,7 @@ public class GLES2_Light_Obj_Activity extends AppCompatActivity {
 
             Context context = GLES2_Light_Obj_Activity.this;
 
-            ObjLoader loader = new ObjLoader();
+            BasicObjLoader loader = new SmoothObjLoader();
 
             mLightObjObject = new LightObjObject(context, loader.loadObjFile(context, "teapot/teapot.obj"));
             mLight = new Light();

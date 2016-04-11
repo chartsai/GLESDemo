@@ -131,7 +131,7 @@ public class BasicObjLoader {
                             if (vertexDataString.length >= 3) {
                                 int normalIndex2 = Integer.parseInt(vertexDataString[2]);
                                 if (normalIndex2 > 0) {
-                                    normalIndex2 = positionIndex2 - 1;
+                                    normalIndex2 = normalIndex2 - 1;
                                 } else { // related index
                                     normalIndex2 = normalIndex2 + normalCounter;
                                 }
@@ -160,7 +160,7 @@ public class BasicObjLoader {
                             if (vertexDataString.length >= 3) {
                                 normalIndex3 = Integer.parseInt(vertexDataString[2]);
                                 if (normalIndex3 > 0) {
-                                    normalIndex3 = positionIndex3 - 1;
+                                    normalIndex3 = normalIndex3 - 1;
                                 } else { // related index
                                     normalIndex3 = normalIndex3 + normalCounter;
                                 }
@@ -208,7 +208,7 @@ public class BasicObjLoader {
                                 if (vertexDataString.length >= 3) {
                                     int normalIndex4 = Integer.parseInt(vertexDataString[2]);
                                     if (normalIndex4 > 0) {
-                                        normalIndex4 = positionIndex4 - 1;
+                                        normalIndex4 = normalIndex4 - 1;
                                     } else { // related index
                                         normalIndex4 = normalIndex4 + normalCounter;
                                     }

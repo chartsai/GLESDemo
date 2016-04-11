@@ -1,10 +1,13 @@
 package idv.chatea.gldemo.gles20;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.opengl.GLES20;
 import android.util.Log;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 
 public class Utils {
@@ -88,6 +91,17 @@ public class Utils {
         while ((error = GLES20.glGetError()) != GLES20.GL_NO_ERROR) {
             Log.e(TAG, op + ": glError " + error);
             throw new RuntimeException(op + ": glError " + error);
+        }
+    }
+
+    public static Bitmap loadFromAssetsImage(Context context, String fileName) {
+        try {
+            // get input stream
+            InputStream is = context.getAssets().open(fileName);
+            // load image as Drawable
+            return BitmapFactory.decodeStream(is);
+        } catch(IOException ex) {
+            return null;
         }
     }
 }

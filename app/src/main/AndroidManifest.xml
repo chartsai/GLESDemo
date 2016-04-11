@@ -49,6 +49,7 @@
         <activity android:name=".GLES2_Multiple_Texture_Activity" />
         <activity android:name=".LightActivity" android:parentActivityName=".MainActivity"/>
         <activity android:name=".GLES2_Light_Obj_Activity" />
+        <activity android:name=".GLES2_Light_Texture_Obj_Activity" />
         <activity android:name=".GLES2_Load_Obj_Activity" />
     </application>
 

@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class LightActivity extends Activity implements AdapterView.OnItemClickListener {
+public class LoadObjActivity extends Activity implements AdapterView.OnItemClickListener {
 
     private static final String TITLE = "title";
 
@@ -29,6 +29,7 @@ public class LightActivity extends Activity implements AdapterView.OnItemClickLi
     }
 
     private static final Sample[] mSamples = {
+            new Sample("GLES 2.0 Load Obj (in progress)", GLES2_Load_Obj_Activity.class),
             new Sample("GLES 2.0 Light Obj Sample", GLES2_Light_Obj_Activity.class),
             new Sample("GLES 2.0 Light Texture Obj Sample", GLES2_Light_Texture_Obj_Activity.class),
     };

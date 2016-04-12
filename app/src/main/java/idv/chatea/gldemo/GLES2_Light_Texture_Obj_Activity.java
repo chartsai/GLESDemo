@@ -13,10 +13,9 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import idv.chatea.gldemo.gles20.Utils;
-import idv.chatea.gldemo.gles20.light.Light;
-import idv.chatea.gldemo.gles20.light.LightTextureObjObject;
+import idv.chatea.gldemo.lighting.Light;
+import idv.chatea.gldemo.lighting.LightTextureObjObject;
 import idv.chatea.gldemo.objloader.BasicObjLoader;
-import idv.chatea.gldemo.objloader.SmoothObjLoader;
 
 public class GLES2_Light_Texture_Obj_Activity extends AppCompatActivity {
 
@@ -64,6 +63,8 @@ public class GLES2_Light_Texture_Obj_Activity extends AppCompatActivity {
 
         private float[] mEyePoint = new float[3];
         private float mViewDistance = 200;
+//        private float mViewDistance = 200;
+//        private float mViewDistance = 8000;
         private float mTheta = 90;
         private float mPhi = 0;
 
@@ -78,15 +79,18 @@ public class GLES2_Light_Texture_Obj_Activity extends AppCompatActivity {
 
             Context context = GLES2_Light_Texture_Obj_Activity.this;
 
-            BasicObjLoader loader = new SmoothObjLoader();
+            BasicObjLoader loader = new BasicObjLoader();
+//            BasicObjLoader loader = new SmoothObjLoader();
 
-
+            BasicObjLoader.ObjData data = loader.loadObjFile(context, "teapot/teapot.obj");
             Bitmap bitmap = Utils.loadFromAssetsImage(context, "teapot/default.png");
-            mLightObjObject = new LightTextureObjObject(context, loader.loadObjFile(context, "teapot/teapot.obj"), bitmap);
+            mLightObjObject = new LightTextureObjObject(context, data, bitmap);
             bitmap.recycle();
             mLight = new Light();
-            mLight.position = new float[]{200, 200, 200, 1.0f};
-            mLight.ambientChannel = new float[]{0.15f, 0.15f, 0.15f, 1.0f};
+//            mLight.position = new float[]{200, 200, 200, 1.0f};
+            mLight.position = new float[]{1000, 1000, 1000, 1.0f};
+//            mLight.ambientChannel = new float[]{0.15f, 0.15f, 0.15f, 1.0f};
+            mLight.ambientChannel = new float[]{1.0f, 1.0f, 1.0f, 1.0f};
             mLight.diffusionChannel = new float[]{0.3f, 0.3f, 0.3f, 1.0f};
             mLight.specularChannel = new float[]{0.4f, 0.4f, 0.4f, 1.0f};
         }

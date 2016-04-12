@@ -12,10 +12,9 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import idv.chatea.gldemo.lighting.Light;
-import idv.chatea.gldemo.lighting.LightObjObject;
-import idv.chatea.gldemo.objloader.BasicObjLoader;
+import idv.chatea.gldemo.lighting.LightBlockBall;
 
-public class GLES2_Light_Obj_Activity extends AppCompatActivity {
+public class GLES2_Light_Effect_Activity extends AppCompatActivity {
 
     private GLSurfaceView mGLSurfaceView;
     private MyRenderer mRenderer;
@@ -60,12 +59,11 @@ public class GLES2_Light_Obj_Activity extends AppCompatActivity {
         private static final float MOVEMENT_FACTOR_PHI = 90.0f / 320;
 
         private float[] mEyePoint = new float[3];
-        private float mViewDistance = 200;
+        private float mViewDistance = 10;
         private float mTheta = 90;
         private float mPhi = 0;
 
-        private LightObjObject mLightObjObject;
-
+        private LightBlockBall mBall;
         private Light mLight;
 
         @Override
@@ -73,16 +71,12 @@ public class GLES2_Light_Obj_Activity extends AppCompatActivity {
             GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
             GLES20.glEnable(GLES20.GL_DEPTH_TEST);
 
-            Context context = GLES2_Light_Obj_Activity.this;
+            Context context = GLES2_Light_Effect_Activity.this;
 
-//            BasicObjLoader loader = new SmoothObjLoader();
-            BasicObjLoader loader = new BasicObjLoader();
-
-//            mLightObjObject = new LightObjObject(context, loader.loadObjFile(context, "teapot/teapot.obj"));
-            mLightObjObject = new LightObjObject(context, loader.loadObjFile(context, "lost_empire.obj"));
+            mBall = new LightBlockBall();
 
             mLight = new Light();
-            mLight.position = new float[]{200, 200, 200, 1.0f};
+            mLight.position = new float[]{20, 20, 20, 1.0f};
             mLight.ambientChannel = new float[]{0.15f, 0.15f, 0.15f, 1.0f};
             mLight.diffusionChannel = new float[]{0.3f, 0.3f, 0.3f, 1.0f};
             mLight.specularChannel = new float[]{0.4f, 0.4f, 0.4f, 1.0f};
@@ -118,7 +112,7 @@ public class GLES2_Light_Obj_Activity extends AppCompatActivity {
             Matrix.translateM(moduleMatrix, 0, 0, -50, 0);
 
             Matrix.multiplyMM(mvpMatrix, 0, vpMatrix, 0, moduleMatrix, 0);
-            mLightObjObject.draw(mvpMatrix, mLight, mEyePoint);
+            mBall.draw(mvpMatrix, mLight, mEyePoint);
         }
 
         public void handleDrag(final float dx, final float dy) {

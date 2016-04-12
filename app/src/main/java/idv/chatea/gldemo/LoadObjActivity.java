@@ -36,6 +36,7 @@ public class LoadObjActivity extends Activity implements AdapterView.OnItemClick
             new Sample("GLES 2.0 Simple Light Obj Sample", GLES2_Light_Obj_Activity.class),
             new Sample("GLES 2.0 Smooth Light Obj Sample", GLES2_Light_Smooth_Obj_Activity.class),
             new Sample("GLES 2.0 Light Texture Obj Sample", GLES2_Light_Texture_Obj_Activity.class),
+            new Sample("GLES 2.0 Multiple Light Obj Sample", GLES2_Multiple_Light_Obj_Activity.class),
     };
 
     @Override

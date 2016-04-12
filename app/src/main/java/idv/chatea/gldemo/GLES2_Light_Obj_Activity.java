@@ -75,11 +75,9 @@ public class GLES2_Light_Obj_Activity extends AppCompatActivity {
 
             Context context = GLES2_Light_Obj_Activity.this;
 
-//            BasicObjLoader loader = new SmoothObjLoader();
             BasicObjLoader loader = new BasicObjLoader();
 
-//            mLightObjObject = new LightObjObject(context, loader.loadObjFile(context, "teapot/teapot.obj"));
-            mLightObjObject = new LightObjObject(context, loader.loadObjFile(context, "lost_empire.obj"));
+            mLightObjObject = new LightObjObject(context, loader.loadObjFile(context, "teapot/teapot.obj"));
 
             mLight = new Light();
             mLight.position = new float[]{200, 200, 200, 1.0f};

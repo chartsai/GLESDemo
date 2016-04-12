@@ -50,8 +50,9 @@
         <activity android:name=".GLES2_Light_Effect_Activity"
             android:screenOrientation="portrait" />
         <activity android:name=".LoadObjActivity" android:parentActivityName=".MainActivity"/>
-        <activity android:name=".GLES2_Load_Obj_Activity" />
+        <activity android:name=".GLES2_Load_Obj_Position_Activity" />
         <activity android:name=".GLES2_Light_Obj_Activity" />
+        <activity android:name=".GLES2_Light_Smooth_Obj_Activity" />
         <activity android:name=".GLES2_Light_Texture_Obj_Activity" />
     </application>
 

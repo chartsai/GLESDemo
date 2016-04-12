@@ -16,7 +16,7 @@ import idv.chatea.gldemo.objloader.PositionOnlyObjLoader;
 /**
  * TODO load normal (with lighting effects) and load texture
  */
-public class GLES2_Load_Obj_Activity extends AppCompatActivity {
+public class GLES2_Load_Obj_Position_Activity extends AppCompatActivity {
 
     private GLSurfaceView mGLSurfaceView;
     private MyRenderer mRenderer;
@@ -74,7 +74,7 @@ public class GLES2_Load_Obj_Activity extends AppCompatActivity {
 
             PositionOnlyObjLoader loader = new PositionOnlyObjLoader();
 
-            mObjObject = new ObjPositionObject(loader.loadObjFile(GLES2_Load_Obj_Activity.this, "teapot/teapot.obj"));
+            mObjObject = new ObjPositionObject(loader.loadObjFile(GLES2_Load_Obj_Position_Activity.this, "teapot/teapot.obj"));
         }
 
         @Override
@@ -95,7 +95,7 @@ public class GLES2_Load_Obj_Activity extends AppCompatActivity {
             Matrix.setLookAtM(mViewMatrix, 0,
                     mEyePoint[0], mEyePoint[1], mEyePoint[2],
                     0f, 0f, 0f,
-                    0f, 0f, mTheta % 360 < 180 ? 1.0f : -1.0f);
+                    0f, mTheta % 360 < 180 ? 1.0f : -1.0f, 0f);
 
             float[] mvpMatrix = new float[16];
 
@@ -104,11 +104,9 @@ public class GLES2_Load_Obj_Activity extends AppCompatActivity {
 
             float[] moduleMatrix = new float[16];
             Matrix.setIdentityM(moduleMatrix, 0);
-
-            Matrix.setRotateEulerM(moduleMatrix, 0, 270, 0, 90);
+            Matrix.translateM(moduleMatrix, 0, 0, -50, 0);
 
             Matrix.multiplyMM(mvpMatrix, 0, vpMatrix, 0, moduleMatrix, 0);
-
             mObjObject.draw(mvpMatrix);
         }
 
@@ -139,9 +137,10 @@ public class GLES2_Load_Obj_Activity extends AppCompatActivity {
 
             double radianceTheta = theta * Math.PI / 180;
             double radiancePhi = phi * Math.PI / 180;
-            mEyePoint[0] = (float) (mViewDistance * Math.sin(radianceTheta) * Math.cos(radiancePhi));
-            mEyePoint[1] = (float) (mViewDistance * Math.sin(radianceTheta) * Math.sin(radiancePhi));
-            mEyePoint[2] = (float) (mViewDistance * Math.cos(radianceTheta));
+
+            mEyePoint[0] = (float) (mViewDistance * Math.sin(radianceTheta) * Math.sin(radiancePhi));
+            mEyePoint[1] = (float) (mViewDistance * Math.cos(radianceTheta));
+            mEyePoint[2] = (float) (mViewDistance * Math.sin(radianceTheta) * Math.cos(radiancePhi));
         }
     }
 }

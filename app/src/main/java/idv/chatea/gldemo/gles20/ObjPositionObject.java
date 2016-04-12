@@ -18,7 +18,7 @@ public class ObjPositionObject {
     private static final String FRAGMENT_CODE =
             "precision mediump float;" +
             "void main() {" +
-            "  gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);" +
+            "  gl_FragColor = vec4(1.0);" +
             "}";
 
     private static final int BYTES_PER_INT = Integer.SIZE / Byte.SIZE;
@@ -77,9 +77,8 @@ public class ObjPositionObject {
     }
 
     public void draw(float[] mvpMatrix) {
-
         boolean cullFace = GLES20.glIsEnabled(GLES20.GL_CULL_FACE);
-        GLES20.glDisable(GLES20.GL_CULL_FACE);
+        GLES20.glEnable(GLES20.GL_CULL_FACE);
 
         GLES20.glUseProgram(mProgram);
         GLES20.glEnableVertexAttribArray(mPositionHandle);

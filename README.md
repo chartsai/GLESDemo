@@ -1,5 +1,5 @@
 # GLESDemo
-USed to demo basic GLES feature.
+Used to demo some GLES feature Android.
 
 ## Screen shots
 
@@ -9,6 +9,7 @@ USed to demo basic GLES feature.
 ![Screen Shot 3](/screen_shots/screen_shot3.png)
 ![Screen Shot Firework 0](/screen_shots/screen_shot_firework0.png)
 ![Screen Shot 4](/screen_shots/screen_shot4.png)
+![Screen Shot Obj 2](/screen_shots/screen_shot_obj2.png)
 
 ## Usage
 Please use Android Studio to import this project.
@@ -39,6 +40,20 @@ HTC one A9
 ![Firework Screen Shot 0](/screen_shots/screen_shot_firework0.png)
 ![Firework Screen Shot 1](/screen_shots/screen_shot_firework1.png)
 ![Firework Screen Shot 2](/screen_shots/screen_shot_firework2.png)
+
+---
+
+## Obj Loader (LoadObjActivity) ##
+### Features
+Load obj file in some general ways.
+All obj files are stored in assets folder.
+(Please keep to license file of obj files)
+
+### Screen Shots
+![Obj Loader Screen Shot 0](/screen_shots/screen_shot_obj0.png)
+![Obj Loader Screen Shot 1](/screen_shots/screen_shot_obj1.png)
+![Obj Loader Screen Shot 2](/screen_shots/screen_shot_obj2.png)
+![Obj Loader Screen Shot 3](/screen_shots/screen_shot_obj3.png)
 
 ---
 

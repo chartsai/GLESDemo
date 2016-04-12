@@ -1,7 +1,6 @@
 package idv.chatea.gldemo;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
@@ -12,13 +11,12 @@ import android.view.MotionEvent;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-import idv.chatea.gldemo.gles20.Utils;
 import idv.chatea.gldemo.lighting.Light;
-import idv.chatea.gldemo.lighting.LightTextureObjObject;
+import idv.chatea.gldemo.lighting.LightObjObject;
 import idv.chatea.gldemo.objloader.BasicObjLoader;
 import idv.chatea.gldemo.objloader.SmoothObjLoader;
 
-public class GLES2_Light_Texture_Obj_Activity extends AppCompatActivity {
+public class GLES2_Light_Smooth_Obj_Activity extends AppCompatActivity {
 
     private GLSurfaceView mGLSurfaceView;
     private MyRenderer mRenderer;
@@ -67,7 +65,7 @@ public class GLES2_Light_Texture_Obj_Activity extends AppCompatActivity {
         private float mTheta = 90;
         private float mPhi = 0;
 
-        private LightTextureObjObject mLightObjObject;
+        private LightObjObject mLightObjObject;
 
         private Light mLight;
 
@@ -76,14 +74,11 @@ public class GLES2_Light_Texture_Obj_Activity extends AppCompatActivity {
             GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
             GLES20.glEnable(GLES20.GL_DEPTH_TEST);
 
-            Context context = GLES2_Light_Texture_Obj_Activity.this;
+            Context context = GLES2_Light_Smooth_Obj_Activity.this;
 
             BasicObjLoader loader = new SmoothObjLoader();
 
-            BasicObjLoader.ObjData data = loader.loadObjFile(context, "teapot/teapot.obj");
-            Bitmap bitmap = Utils.loadFromAssetsImage(context, "teapot/default.png");
-            mLightObjObject = new LightTextureObjObject(context, data, bitmap);
-            bitmap.recycle();
+            mLightObjObject = new LightObjObject(context, loader.loadObjFile(context, "teapot/teapot.obj"));
 
             mLight = new Light();
             mLight.position = new float[]{200, 200, 200, 1.0f};

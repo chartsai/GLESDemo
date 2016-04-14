@@ -62,3 +62,6 @@ Charlie Tsai (chatea): cha122977@gmail.com
 
 ## LICENSE
 [Apache 2.0](/LICENSE)
+
+[skybox image](app/src/main/res/drawable/skybox.png) from [https://reije081.home.xs4all.nl/skyboxes/](Roelz'n Boel)
+

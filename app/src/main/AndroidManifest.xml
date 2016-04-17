@@ -56,6 +56,7 @@
         <activity android:name=".GLES2_Light_Texture_Obj_Activity" />
         <activity android:name=".GLES2_Multiple_Light_Obj_Activity" />
         <activity android:name=".GLES2_Portal_Activity" />
+        <activity android:name=".GLES2_Mirror_Activity" />
     </application>
 
 </manifest>

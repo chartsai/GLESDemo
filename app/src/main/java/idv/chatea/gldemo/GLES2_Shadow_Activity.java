@@ -15,18 +15,19 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import idv.chatea.gldemo.gles20.Skybox;
-import idv.chatea.gldemo.shadow.LightingEffectData;
-import idv.chatea.gldemo.shadow.ShadowEffectData;
-import idv.chatea.gldemo.shadow.ShadowTexture;
 import idv.chatea.gldemo.lighting.Light;
 import idv.chatea.gldemo.lighting.LightObjObject;
 import idv.chatea.gldemo.objloader.BasicObjLoader;
 import idv.chatea.gldemo.objloader.SmoothObjLoader;
+import idv.chatea.gldemo.lighting.LightingEffectData;
+import idv.chatea.gldemo.shadow.Shadow;
+import idv.chatea.gldemo.shadow.ShadowEffectData;
+import idv.chatea.gldemo.shadow.ShadowTexture;
 
 /**
- * Used to demo the mirror view.
- * Mirror can be think as a special case of portal view.
- * Useful reference: https://en.wikibooks.org/wiki/OpenGL_Programming/Mini-Portal
+ * Used to demo the simple shadow.
+ * The key point is using Framebuffer object (FBO) to render a shadow first,
+ * then mapping the shadow to the final scene.
  */
 public class GLES2_Shadow_Activity extends AppCompatActivity {
 
@@ -43,8 +44,9 @@ public class GLES2_Shadow_Activity extends AppCompatActivity {
         mGLSurfaceView.setEGLContextClientVersion(2);
         // Just in case... explicitly specify using alpha bit.
         mGLSurfaceView.getHolder().setFormat(PixelFormat.TRANSLUCENT);
-        // explicitly specify using stencil buffer.
-        mGLSurfaceView.setEGLConfigChooser(8, 8, 8, 8, 16, 8);
+        // explicitly specify the buffer size.
+        mGLSurfaceView.setEGLConfigChooser(8, 8, 8, 8, 8, 8);
+        mGLSurfaceView.setDebugFlags(GLSurfaceView.DEBUG_CHECK_GL_ERROR);
         mRenderer = new MyRenderer();
         mGLSurfaceView.setRenderer(mRenderer);
         mGLSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
@@ -74,6 +76,7 @@ public class GLES2_Shadow_Activity extends AppCompatActivity {
     /**
      * Customized a Mirror class. Use it to simulate the view.
      */
+
     private static class Desktop extends ShadowTexture {
 
         public Desktop(Context context, Bitmap bitmap) {
@@ -117,12 +120,14 @@ public class GLES2_Shadow_Activity extends AppCompatActivity {
 
         private Light mLight;
 
+        private Shadow mShadow;
+
         private Desktop mDesktop;
         private float[] mDesktopModule = new float[16];
 
         @Override
         public void onSurfaceCreated(GL10 unused, EGLConfig config) {
-            GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+            GLES20.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
             GLES20.glEnable(GLES20.GL_DEPTH_TEST);
             GLES20.glEnable(GLES20.GL_CULL_FACE);
 
@@ -137,11 +142,12 @@ public class GLES2_Shadow_Activity extends AppCompatActivity {
             BasicObjLoader loader = new SmoothObjLoader();
             mTeapot = new LightObjObject(context, loader.loadObjFile(context, "teapot/teapot.obj"));
             Matrix.setIdentityM(mTeapotModule, 0);
-            Matrix.rotateM(mTeapotModule, 0, -30, 0, 1, 0);
+            Matrix.translateM(mTeapotModule, 0, 40, 0, -40);
+            Matrix.rotateM(mTeapotModule, 0, -60, 0, 1, 0);
 
             mLight = new Light();
-            mLight.position = new float[]{mViewDistance, mViewDistance/2, -mViewDistance, 1.0f};
-            mLight.ambientChannel = new float[]{0.7f, 0.7f, 0.7f, 1.0f};
+            mLight.position = new float[]{mViewDistance, mViewDistance, -mViewDistance, 1.0f};
+            mLight.ambientChannel = new float[]{0.3f, 0.3f, 0.3f, 1.0f};
             mLight.diffusionChannel = new float[]{0.5f, 0.5f, 0.5f, 1.0f};
             mLight.specularChannel = new float[]{0.55f, 0.55f, 0.55f, 1.0f};
 
@@ -156,16 +162,21 @@ public class GLES2_Shadow_Activity extends AppCompatActivity {
             GLES20.glViewport(0, 0, width, height);
 
             float ratio = (float) width / height;
-            Matrix.frustumM(mProjectMatrix, 0, -ratio, ratio, -1, 1, 2f, mViewDistance * 3);
+            Matrix.frustumM(mProjectMatrix, 0, -ratio * mViewDistance / 4, ratio * mViewDistance / 4,
+                    -1 * mViewDistance / 4, 1 * mViewDistance / 4, mViewDistance, mViewDistance * 3);
+
+            mShadow = new Shadow(width, height);
         }
 
         @Override
         public void onDrawFrame(GL10 unused) {
 
+            float[] rotateMatrix = new float[16];
+            Matrix.setRotateM(rotateMatrix, 0, 1, 0, 1, 0);
+            Matrix.multiplyMM(mTeapotModule, 0, rotateMatrix, 0, mTeapotModule, 0);
+            Matrix.multiplyMM(mDesktopModule, 0, rotateMatrix, 0, mDesktopModule, 0);
+
             updateEyePosition();
-
-            GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
-
 
             /**
              * Prepare common rendering resources
@@ -175,16 +186,13 @@ public class GLES2_Shadow_Activity extends AppCompatActivity {
                     0f, 0f, 0f,
                     0f, mTheta % 360 < 180 ? 1.0f : -1.0f, 0f);
 
-            float[] mvpMatrix = new float[16];
             float[] vpMatrix = new float[16];
 
             Matrix.multiplyMM(vpMatrix, 0, mProjectMatrix, 0, mViewMatrix, 0);
 
-
             /**
              * Prepare lighting and shadowing resources
              */
-            float[] lightMVPMatrix = new float[16]; // TODO
             float[] lightVPMatrix = new float[16];
             float[] lightViewMatrix = new float[16];
 
@@ -196,18 +204,25 @@ public class GLES2_Shadow_Activity extends AppCompatActivity {
             Matrix.multiplyMM(lightVPMatrix, 0, mProjectMatrix, 0, lightViewMatrix, 0);
             LightingEffectData lightingEffectData = new LightingEffectData(mLight, mEyePoint);
 
+            mShadow.startDrawShadowTexture();
+            GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT);
+
+            // render to shadow texture.
+            mTeapot.draw(lightVPMatrix, mTeapotModule, mLight, mLight.position);
+
+            mShadow.stopDrawShadowTexture();
 
             /**
              * Render all scene.
              */
-            Matrix.multiplyMM(mvpMatrix, 0, vpMatrix, 0, mTeapotModule, 0);
+            GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
+
             mTeapot.draw(vpMatrix, mTeapotModule, mLight, mEyePoint);
 
             // Desktop use shadow.
-            mDesktop.draw(vpMatrix, mDesktopModule, new ShadowEffectData(lightingEffectData, lightMVPMatrix));
+            mDesktop.draw(vpMatrix, mDesktopModule, new ShadowEffectData(mShadow, lightingEffectData, lightVPMatrix));
 
-            Matrix.multiplyMM(mvpMatrix, 0, vpMatrix, 0, mSkyboxModule, 0);
-            mSkybox.draw(mvpMatrix);
+            mSkybox.draw(vpMatrix, mSkyboxModule);
         }
 
         public void handleDrag(final float dx, final float dy) {
@@ -236,9 +251,9 @@ public class GLES2_Shadow_Activity extends AppCompatActivity {
             double radianceTheta = theta * Math.PI / 180;
             double radiancePhi = phi * Math.PI / 180;
 
-            mEyePoint[0] = (float) (mViewDistance * Math.sin(radianceTheta) * Math.sin(radiancePhi));
-            mEyePoint[1] = (float) (mViewDistance * Math.cos(radianceTheta));
-            mEyePoint[2] = (float) (mViewDistance * Math.sin(radianceTheta) * Math.cos(radiancePhi));
+            mEyePoint[0] = (float) (2 * mViewDistance * Math.sin(radianceTheta) * Math.sin(radiancePhi));
+            mEyePoint[1] = (float) (2 * mViewDistance * Math.cos(radianceTheta));
+            mEyePoint[2] = (float) (2 * mViewDistance * Math.sin(radianceTheta) * Math.cos(radiancePhi));
         }
     }
 }

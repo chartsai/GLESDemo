@@ -221,8 +221,7 @@ public class GLES2_Portal_Activity extends AppCompatActivity {
 
                 mTeapot.draw(vpMatrix, mTeapotModule, mLight, mEyePoint);
 
-                Matrix.multiplyMM(mvpMatrix, 0, vpMatrix, 0, mSkyboxModule, 0);
-                mSkybox.draw(mvpMatrix);
+                mSkybox.draw(vpMatrix, mSkyboxModule);
             }
             // render on portal complete, disable stencil test.
             GLES20.glDisable(GLES20.GL_STENCIL_TEST);
@@ -253,8 +252,7 @@ public class GLES2_Portal_Activity extends AppCompatActivity {
              */
             mTeapot.draw(vpMatrix, mTeapotModule, mLight, mEyePoint);
 
-            Matrix.multiplyMM(mvpMatrix, 0, vpMatrix, 0, mSkyboxModule, 0);
-            mSkybox.draw(mvpMatrix);
+            mSkybox.draw(vpMatrix, mSkyboxModule);
         }
 
         private float[] getPortalViewMatrix(float[] viewMatrix, float[] viewPortal, float[] canvasPortal) {

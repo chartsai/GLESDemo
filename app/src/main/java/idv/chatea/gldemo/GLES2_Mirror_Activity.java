@@ -233,8 +233,7 @@ public class GLES2_Mirror_Activity extends AppCompatActivity {
 
                 mTeapot.draw(vpMatrix, mTeapotModule, mLight, mEyePoint);
 
-                Matrix.multiplyMM(mvpMatrix, 0, vpMatrix, 0, mSkyboxModule, 0);
-                mSkybox.draw(mvpMatrix);
+                mSkybox.draw(vpMatrix, mSkyboxModule);
 
                 GLES20.glFrontFace(GLES20.GL_CCW);
             }
@@ -269,8 +268,7 @@ public class GLES2_Mirror_Activity extends AppCompatActivity {
              */
             mTeapot.draw(vpMatrix, mTeapotModule, mLight, mEyePoint);
 
-            Matrix.multiplyMM(mvpMatrix, 0, vpMatrix, 0, mSkyboxModule, 0);
-            mSkybox.draw(mvpMatrix);
+            mSkybox.draw(vpMatrix, mSkyboxModule);
         }
 
         private float[] getMirrorViewMatrix(float[] viewMatrix, float[] mirror) {

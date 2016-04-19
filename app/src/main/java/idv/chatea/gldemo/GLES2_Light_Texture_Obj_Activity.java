@@ -112,8 +112,6 @@ public class GLES2_Light_Texture_Obj_Activity extends AppCompatActivity {
                     0f, 0f, 0f,
                     0f, mTheta % 360 < 180 ? 1.0f : -1.0f, 0f);
 
-            float[] mvpMatrix = new float[16];
-
             float[] vpMatrix = new float[16];
             Matrix.multiplyMM(vpMatrix, 0, mProjectMatrix, 0, mViewMatrix, 0);
 
@@ -121,8 +119,7 @@ public class GLES2_Light_Texture_Obj_Activity extends AppCompatActivity {
             Matrix.setIdentityM(moduleMatrix, 0);
             Matrix.translateM(moduleMatrix, 0, 0, -50, 0);
 
-            Matrix.multiplyMM(mvpMatrix, 0, vpMatrix, 0, moduleMatrix, 0);
-            mLightObjObject.draw(mvpMatrix, mLight, mEyePoint);
+            mLightObjObject.draw(vpMatrix, moduleMatrix, mLight, mEyePoint);
         }
 
         public void handleDrag(final float dx, final float dy) {

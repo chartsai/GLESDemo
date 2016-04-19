@@ -27,14 +27,23 @@ public class LightObjObject {
 
     private int[] mVertexGLBuffer = new int[1];
 
+    protected Material mMaterial = new Material();
+
     private int mProgram;
-    private int mMVPMatrixHandle;
+    private int mVPMatrixHandle;
+    private int mMMatrixHandle;
     private int mPositionHandle;
     private int mNormalHandle;
     private int mLightPositionHandle;
     private int mAmbientHandle;
     private int mDiffusionHandle;
     private int mSpecularHandle;
+
+    private int mMaterialAmbientHandler;
+    private int mMaterialDiffusionHandler;
+    private int mMaterialSpecularHandler;
+    private int mMaterialRoughnessHandler;
+
     private int mEyePositionHandle;
     private int mColorHandler;
 
@@ -60,18 +69,25 @@ public class LightObjObject {
         String fragmentCode = Utils.loadFromAssetsFile(context, "shaders/light_fragment.glsl");
         mProgram = Utils.createProgram(vertexCode, fragmentCode);
 
-        mMVPMatrixHandle = GLES20.glGetUniformLocation(mProgram, "uMVPMatrix");
+        mVPMatrixHandle = GLES20.glGetUniformLocation(mProgram, "uVPMatrix");
+        mMMatrixHandle = GLES20.glGetUniformLocation(mProgram, "uMMatrix");
         mPositionHandle = GLES20.glGetAttribLocation(mProgram, "aPosition");
         mNormalHandle = GLES20.glGetAttribLocation(mProgram, "aNormal");
         mLightPositionHandle = GLES20.glGetUniformLocation(mProgram, "uLightPosition");
         mAmbientHandle = GLES20.glGetUniformLocation(mProgram, "uAmbient");
         mDiffusionHandle = GLES20.glGetUniformLocation(mProgram, "uDiffusion");
         mSpecularHandle = GLES20.glGetUniformLocation(mProgram, "uSpecular");
+
+        mMaterialAmbientHandler = GLES20.glGetUniformLocation(mProgram, "uMaterial.ambient");
+        mMaterialDiffusionHandler = GLES20.glGetUniformLocation(mProgram, "uMaterial.diffusion");
+        mMaterialSpecularHandler = GLES20.glGetUniformLocation(mProgram, "uMaterial.specular");
+        mMaterialRoughnessHandler = GLES20.glGetUniformLocation(mProgram, "uMaterial.roughness");
+
         mEyePositionHandle = GLES20.glGetUniformLocation(mProgram, "uEyePosition");
         mColorHandler = GLES20.glGetUniformLocation(mProgram, "uColor");
     }
 
-    public void draw(float[] mvpMatrix, Light light, float[] eyePosition) {
+    public void draw(float[] vpMatrix, float[] moduleMatrix, Light light, float[] eyePosition) {
         boolean cullFace = GLES20.glIsEnabled(GLES20.GL_CULL_FACE);
         GLES20.glEnable(GLES20.GL_CULL_FACE);
 
@@ -80,13 +96,18 @@ public class LightObjObject {
         GLES20.glEnableVertexAttribArray(mNormalHandle);
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, mVertexGLBuffer[0]);
 
-        GLES20.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mvpMatrix, 0);
+        GLES20.glUniformMatrix4fv(mVPMatrixHandle, 1, false, vpMatrix, 0);
+        GLES20.glUniformMatrix4fv(mMMatrixHandle, 1, false, moduleMatrix, 0);
         GLES20.glVertexAttribPointer(mPositionHandle, POSITION_DATA_SIZE, GLES20.GL_FLOAT, false, VERTEX_DATA_STRIDE, POSITION_OFFSET);
         GLES20.glVertexAttribPointer(mNormalHandle, NORMAL_DATA_SIZE, GLES20.GL_FLOAT, false, VERTEX_DATA_STRIDE, NORMAL_OFFSET);
         GLES20.glUniform4fv(mLightPositionHandle, 1, light.position, 0);
         GLES20.glUniform4fv(mAmbientHandle, 1, light.ambientChannel, 0);
         GLES20.glUniform4fv(mDiffusionHandle, 1, light.diffusionChannel, 0);
         GLES20.glUniform4fv(mSpecularHandle, 1, light.specularChannel, 0);
+        GLES20.glUniform4fv(mMaterialAmbientHandler, 1, mMaterial.ambient, 0);
+        GLES20.glUniform4fv(mMaterialDiffusionHandler, 1, mMaterial.diffusion, 0);
+        GLES20.glUniform4fv(mMaterialSpecularHandler, 1, mMaterial.specular, 0);
+        GLES20.glUniform1f(mMaterialRoughnessHandler, mMaterial.roughness);
         GLES20.glUniform3fv(mEyePositionHandle, 1, eyePosition, 0);
         GLES20.glUniform4fv(mColorHandler, 1, COLOR, 0);
 

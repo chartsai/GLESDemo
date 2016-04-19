@@ -219,8 +219,7 @@ public class GLES2_Portal_Activity extends AppCompatActivity {
                 float[] portalViewMatrix = getPortalViewMatrix(mViewMatrix, pd.viewPortalMatrix, pd.canvasPortalMatrix);
                 Matrix.multiplyMM(vpMatrix, 0, mProjectMatrix, 0, portalViewMatrix, 0);
 
-                Matrix.multiplyMM(mvpMatrix, 0, vpMatrix, 0, mTeapotModule, 0);
-                mTeapot.draw(mvpMatrix, mLight, mEyePoint);
+                mTeapot.draw(vpMatrix, mTeapotModule, mLight, mEyePoint);
 
                 Matrix.multiplyMM(mvpMatrix, 0, vpMatrix, 0, mSkyboxModule, 0);
                 mSkybox.draw(mvpMatrix);
@@ -252,8 +251,7 @@ public class GLES2_Portal_Activity extends AppCompatActivity {
             /**
              * Render all scene.
              */
-            Matrix.multiplyMM(mvpMatrix, 0, vpMatrix, 0, mTeapotModule, 0);
-            mTeapot.draw(mvpMatrix, mLight, mEyePoint);
+            mTeapot.draw(vpMatrix, mTeapotModule, mLight, mEyePoint);
 
             Matrix.multiplyMM(mvpMatrix, 0, vpMatrix, 0, mSkyboxModule, 0);
             mSkybox.draw(mvpMatrix);

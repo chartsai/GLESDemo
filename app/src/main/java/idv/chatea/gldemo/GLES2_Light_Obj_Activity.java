@@ -115,8 +115,7 @@ public class GLES2_Light_Obj_Activity extends AppCompatActivity {
             Matrix.setIdentityM(moduleMatrix, 0);
             Matrix.translateM(moduleMatrix, 0, 0, -50, 0);
 
-            Matrix.multiplyMM(mvpMatrix, 0, vpMatrix, 0, moduleMatrix, 0);
-            mLightObjObject.draw(mvpMatrix, mLight, mEyePoint);
+            mLightObjObject.draw(vpMatrix, moduleMatrix, mLight, mEyePoint);
         }
 
         public void handleDrag(final float dx, final float dy) {

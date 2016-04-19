@@ -79,16 +79,17 @@ public class GLES2_Mirror_Activity extends AppCompatActivity {
         private static float[] NORMAL_VECTOR = {0, 0, -1, 0};
 
         @Override
-        public void draw(float[] mvpMatrix) {
+        public void draw(float[] vpMatrix, float[] modouleMatrix) {
+            float[] correctModuleMatrix = new float[16];
             /**
              * Default size of Plane is (1,1,1), scale it as our size
              */
-            Matrix.scaleM(mvpMatrix, 0, MIRROR_SIZE[0], MIRROR_SIZE[1], MIRROR_SIZE[2]);
+            Matrix.scaleM(correctModuleMatrix, 0, modouleMatrix, 0, MIRROR_SIZE[0], MIRROR_SIZE[1], MIRROR_SIZE[2]);
             /**
              * The original normal of plane is +z, make it same as eye direction (-z) first.
              */
-            Matrix.rotateM(mvpMatrix, 0, 180, 1, 0, 0);
-            super.draw(mvpMatrix);
+            Matrix.rotateM(correctModuleMatrix, 0, 180, 1, 0, 0);
+            super.draw(vpMatrix, correctModuleMatrix);
         }
     }
 
@@ -180,7 +181,6 @@ public class GLES2_Mirror_Activity extends AppCompatActivity {
                     0f, 0f, 0f,
                     0f, mTheta % 360 < 180 ? 1.0f : -1.0f, 0f);
 
-            float[] mvpMatrix = new float[16];
             float[] vpMatrix = new float[16];
 
             class MirrorData {
@@ -212,8 +212,7 @@ public class GLES2_Mirror_Activity extends AppCompatActivity {
                 GLES20.glStencilOp(GLES20.GL_REPLACE, GLES20.GL_KEEP, GLES20.GL_KEEP);
 
                 Matrix.multiplyMM(vpMatrix, 0, mProjectMatrix, 0, mViewMatrix, 0);
-                Matrix.multiplyMM(mvpMatrix, 0, vpMatrix, 0, md.mirrorModule, 0);
-                mMirror.draw(mvpMatrix);
+                mMirror.draw(vpMatrix, md.mirrorModule);
 
                 // allow to draw on the area which stencil buffer is 1
                 GLES20.glColorMask(true, true, true, true);
@@ -254,12 +253,9 @@ public class GLES2_Mirror_Activity extends AppCompatActivity {
             GLES20.glColorMask(false, false, false, false);
 
             // draw mirrors in depth buffer.
-            Matrix.multiplyMM(mvpMatrix, 0, vpMatrix, 0, mMirrorModule1, 0);
-            mMirror.draw(mvpMatrix);
-            Matrix.multiplyMM(mvpMatrix, 0, vpMatrix, 0, mMirrorModule2, 0);
-            mMirror.draw(mvpMatrix);
-            Matrix.multiplyMM(mvpMatrix, 0, vpMatrix, 0, mMirrorModule3, 0);
-            mMirror.draw(mvpMatrix);
+            mMirror.draw(vpMatrix, mMirrorModule1);
+            mMirror.draw(vpMatrix, mMirrorModule2);
+            mMirror.draw(vpMatrix, mMirrorModule3);
 
             GLES20.glColorMask(true, true, true, true);
 

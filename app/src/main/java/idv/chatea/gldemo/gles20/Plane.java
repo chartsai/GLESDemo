@@ -1,11 +1,10 @@
 package idv.chatea.gldemo.gles20;
 
 import android.opengl.GLES20;
+import android.opengl.Matrix;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-
-import idv.chatea.gldemo.gles20.Utils;
 
 public class Plane {
     private static final String VERTEX_SHADER_CODE =
@@ -76,7 +75,10 @@ public class Plane {
         mColorHandle = GLES20.glGetUniformLocation(mProgram, "uColor");
     }
 
-    public void draw(float[] mvpMatrix) {
+    public void draw(float[] vpMatrix, float[] moduleMatrix) {
+        float[] mvpMatrix = new float[16];
+        Matrix.multiplyMM(mvpMatrix, 0, vpMatrix, 0, moduleMatrix, 0);
+
         GLES20.glUseProgram(mProgram);
         GLES20.glEnableVertexAttribArray(mPositionHandle);
 

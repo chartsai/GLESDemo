@@ -73,16 +73,17 @@ public class GLES2_Portal_Activity extends AppCompatActivity {
      */
     private static class Portal extends Plane {
         @Override
-        public void draw(float[] mvpMatrix) {
+        public void draw(float[] vpMatrix, float[] moduleMatrix) {
+            float[] correctModuleMatrix = new float[16];
             /**
              * Default size of Plane is (1,1,1), scale it as our size
              */
-            Matrix.scaleM(mvpMatrix, 0, PORTAL_SIZE[0], PORTAL_SIZE[1], PORTAL_SIZE[2]);
+            Matrix.scaleM(correctModuleMatrix, 0, moduleMatrix, 0, PORTAL_SIZE[0], PORTAL_SIZE[1], PORTAL_SIZE[2]);
             /**
              * The original up of plane is +z, make it same as eye direction (-z) first.
              */
-            Matrix.rotateM(mvpMatrix, 0, 180, 1, 0, 0);
-            super.draw(mvpMatrix);
+            Matrix.rotateM(correctModuleMatrix, 0, 180, 1, 0, 0);
+            super.draw(vpMatrix, correctModuleMatrix);
         }
     }
 
@@ -202,8 +203,7 @@ public class GLES2_Portal_Activity extends AppCompatActivity {
                 GLES20.glStencilOp(GLES20.GL_REPLACE, GLES20.GL_KEEP, GLES20.GL_KEEP);
 
                 Matrix.multiplyMM(vpMatrix, 0, mProjectMatrix, 0, mViewMatrix, 0);
-                Matrix.multiplyMM(mvpMatrix, 0, vpMatrix, 0, pd.canvasPortalMatrix, 0);
-                mPortal.draw(mvpMatrix);
+                mPortal.draw(vpMatrix, pd.canvasPortalMatrix);
 
                 // allow to draw on the area which stencil buffer is 1
                 GLES20.glColorMask(true, true, true, true);
@@ -240,10 +240,8 @@ public class GLES2_Portal_Activity extends AppCompatActivity {
             GLES20.glColorMask(false, false, false, false);
 
             // draw portals in depth buffer.
-            Matrix.multiplyMM(mvpMatrix, 0, vpMatrix, 0, mPortalModule1, 0);
-            mPortal.draw(mvpMatrix);
-            Matrix.multiplyMM(mvpMatrix, 0, vpMatrix, 0, mPortalModule2, 0);
-            mPortal.draw(mvpMatrix);
+            mPortal.draw(vpMatrix, mPortalModule1);
+            mPortal.draw(vpMatrix, mPortalModule2);
 
             GLES20.glColorMask(true, true, true, true);
 

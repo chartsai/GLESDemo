@@ -45,7 +45,7 @@ public class RectangleTexture {
             (POSITION_DATA_SIZE + TEXTURE_COORD_DATA_SIZE) * BYTES_PER_FLOAT;
 
     private static final byte[] INDEX_DATA = {
-            0, 1, 2, 1, 2, 3,
+            0, 1, 2, 2, 1, 3,
     };
 
     private int[] mVertexGLBuffer = new int[1];
@@ -59,6 +59,28 @@ public class RectangleTexture {
     private int mTextureSampleHandler;
 
     public RectangleTexture(Bitmap bitmap) {
+        init();
+
+        GLES20.glGenTextures(1, mGLTexture, 0);
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mGLTexture[0]);
+
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR);
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
+
+        GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0);
+
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
+    }
+
+    public RectangleTexture(int textureId) {
+        init();
+
+        mGLTexture[0] = textureId;
+    }
+
+    private void init() {
         ByteBuffer vbb = ByteBuffer.allocateDirect(BYTES_PER_FLOAT * VERTEX_DATA.length);
         vbb.order(ByteOrder.nativeOrder());
         vbb.asFloatBuffer().put(VERTEX_DATA);
@@ -79,21 +101,6 @@ public class RectangleTexture {
 
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0);
         GLES20.glBindBuffer(GLES20.GL_ELEMENT_ARRAY_BUFFER, 0);
-
-
-        GLES20.glGenTextures(1, mGLTexture, 0);
-
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mGLTexture[0]);
-
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR);
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
-
-        GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0);
-
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
-
 
         mProgram = Utils.createProgram(VERTEX_CODE, FRAGMENT_CODE);
 

@@ -1,3 +1,4 @@
+precision mediump float;
 #define MAX_LIGHT_NUMBER 16
 
 struct Light {

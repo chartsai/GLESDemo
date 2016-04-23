@@ -11,6 +11,7 @@ Used to demo some GLES feature Android.
 ![Screen Shot 4](/screen_shots/screen_shot4.png)
 ![Screen Shot Obj 2](/screen_shots/screen_shot_obj2.png)
 ![Screen Shot 5](/screen_shots/screen_shot5.png)
+![Screen Shot 6](/screen_shots/screen_shot6.png)
 
 ## Usage
 Please use Android Studio to import this project.

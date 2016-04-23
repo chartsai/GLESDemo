@@ -31,6 +31,7 @@ public class ShadowActivity extends Activity implements AdapterView.OnItemClickL
     private static final Sample[] mSamples = {
             new Sample("GLES 2.0 Simple Shadow Sample", GLES2_Simple_Shadow_Activity.class),
             new Sample("GLES 2.0 Multiple Shadows Sample", GLES2_Multiple_Shadows_Activity.class),
+            new Sample("GLES 2.0 Shadows on Object Sample", GLES2_Shadow_on_Object_Activity.class),
     };
 
     @Override

@@ -60,6 +60,7 @@
         <activity android:name=".ShadowActivity" android:parentActivityName=".MainActivity"/>
         <activity android:name=".GLES2_Simple_Shadow_Activity" />
         <activity android:name=".GLES2_Multiple_Shadows_Activity" />
+        <activity android:name=".GLES2_Self_Shadow_Object_Activity" />
         <activity android:name=".GLES2_Shadow_on_Object_Activity" />
     </application>
 

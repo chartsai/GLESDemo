@@ -19,7 +19,6 @@ import idv.chatea.gldemo.lighting.Light;
 import idv.chatea.gldemo.lighting.LightObjObject;
 import idv.chatea.gldemo.objloader.BasicObjLoader;
 import idv.chatea.gldemo.objloader.SmoothObjLoader;
-import idv.chatea.gldemo.lighting.LightingEffectData;
 import idv.chatea.gldemo.shadow.Shadow;
 import idv.chatea.gldemo.shadow.ShadowEffectData;
 import idv.chatea.gldemo.shadow.ShadowTexture;
@@ -29,7 +28,7 @@ import idv.chatea.gldemo.shadow.ShadowTexture;
  * The key point is using Framebuffer object (FBO) to render a shadow first,
  * then mapping the shadow to the final scene.
  */
-public class GLES2_Shadow_Activity extends AppCompatActivity {
+public class GLES2_Simple_Shadow_Activity extends AppCompatActivity {
 
     private GLSurfaceView mGLSurfaceView;
     private MyRenderer mRenderer;
@@ -84,7 +83,7 @@ public class GLES2_Shadow_Activity extends AppCompatActivity {
         }
 
         @Override
-        public void draw(float[] vpMatrix, float[] moduleMatrix, ShadowEffectData shadowEffectData) {
+        public void draw(float[] vpMatrix, float[] moduleMatrix, float[] eyePosition, ShadowEffectData shadowEffectData) {
             float[] correctModuleMatrix = new float[16];
             /**
              * Default size of Plane is (1,1,1), scale it as our size
@@ -94,9 +93,9 @@ public class GLES2_Shadow_Activity extends AppCompatActivity {
              * The original normal of plane is +z, make it as +y
              */
             Matrix.rotateM(correctModuleMatrix, 0, -90, 1, 0, 0);
-            super.draw(vpMatrix, correctModuleMatrix, shadowEffectData);
+            super.draw(vpMatrix, correctModuleMatrix, eyePosition, shadowEffectData);
             Matrix.rotateM(correctModuleMatrix, 0, 180, 1, 0, 0);
-            super.draw(vpMatrix, correctModuleMatrix, shadowEffectData);
+            super.draw(vpMatrix, correctModuleMatrix, eyePosition, shadowEffectData);
         }
     }
 
@@ -131,7 +130,7 @@ public class GLES2_Shadow_Activity extends AppCompatActivity {
             GLES20.glEnable(GLES20.GL_DEPTH_TEST);
             GLES20.glEnable(GLES20.GL_CULL_FACE);
 
-            Context context = GLES2_Shadow_Activity.this;
+            Context context = GLES2_Simple_Shadow_Activity.this;
 
             Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.skybox);
             mSkybox = new Skybox(bitmap);
@@ -202,7 +201,6 @@ public class GLES2_Shadow_Activity extends AppCompatActivity {
                     0f, mTheta % 360 < 180? 1.0f : -1.0f, 0f);
 
             Matrix.multiplyMM(lightVPMatrix, 0, mProjectMatrix, 0, lightViewMatrix, 0);
-            LightingEffectData lightingEffectData = new LightingEffectData(mLight, mEyePoint);
 
             mShadow.startDrawShadowTexture();
             GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT);
@@ -220,7 +218,7 @@ public class GLES2_Shadow_Activity extends AppCompatActivity {
             mTeapot.draw(vpMatrix, mTeapotModule, mLight, mEyePoint);
 
             // Desktop use shadow.
-            mDesktop.draw(vpMatrix, mDesktopModule, new ShadowEffectData(mShadow, lightingEffectData, lightVPMatrix));
+            mDesktop.draw(vpMatrix, mDesktopModule, mEyePoint, new ShadowEffectData(mShadow, mLight, lightVPMatrix));
 
             mSkybox.draw(vpMatrix, mSkyboxModule);
         }

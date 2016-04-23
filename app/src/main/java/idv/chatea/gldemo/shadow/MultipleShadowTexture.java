@@ -13,9 +13,12 @@ import idv.chatea.gldemo.lighting.Light;
 import idv.chatea.gldemo.lighting.Material;
 
 /**
- * A Object who render rectangle texture and it can receive shadow.
+ * A Object who render rectangle texture and it can receive multiple shadows.
  */
-public class ShadowTexture {
+public class MultipleShadowTexture {
+
+    // TODO how to determine this value?
+    public static final int MAX_NUMBER_OF_SHADOW = 8;
 
     private static final float[] VERTEX_DATA = {
             -0.5f, -0.5f, 0, 0, 0, 1, 0, 1, // left-bottom corner
@@ -55,10 +58,6 @@ public class ShadowTexture {
     private int mNormalHandle;
 
     private int mEyePositionHandle;
-    private int mLightPositionHandle;
-    private int mAmbientHandle;
-    private int mDiffusionHandle;
-    private int mSpecularHandle;
 
     private int mMaterialAmbientHandle;
     private int mMaterialDiffusionHandle;
@@ -67,10 +66,9 @@ public class ShadowTexture {
 
     private int mTextureSamplerHandle;
 
-    private int mLightVPMatrixHandle;
-    private int mShadowDepthMapHandle;
+    private int mShadowNumberHandle;
 
-    public ShadowTexture(Context context, Bitmap bitmap) {
+    public MultipleShadowTexture(Context context, Bitmap bitmap) {
         ByteBuffer vbb = ByteBuffer.allocateDirect(BYTES_PER_FLOAT * VERTEX_DATA.length);
         vbb.order(ByteOrder.nativeOrder());
         vbb.asFloatBuffer().put(VERTEX_DATA);
@@ -107,7 +105,7 @@ public class ShadowTexture {
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
 
         String vertexCode = Utils.loadFromAssetsFile(context, "shaders/shadow_texture_vertex.glsl");
-        String fragmentCode = Utils.loadFromAssetsFile(context, "shaders/shadow_texture_fragment.glsl");
+        String fragmentCode = Utils.loadFromAssetsFile(context, "shaders/multiple_shadow_texture_fragment.glsl");
         mProgram = Utils.createProgram(vertexCode, fragmentCode);
 
         mVPMatrixHandle = GLES20.glGetUniformLocation(mProgram, "uVPMatrix");
@@ -117,10 +115,6 @@ public class ShadowTexture {
         mNormalHandle = GLES20.glGetAttribLocation(mProgram, "aNormal");
 
         mEyePositionHandle = GLES20.glGetUniformLocation(mProgram, "uEyePosition");
-        mLightPositionHandle = GLES20.glGetUniformLocation(mProgram, "uLight.position");
-        mAmbientHandle = GLES20.glGetUniformLocation(mProgram, "uLight.ambient");
-        mDiffusionHandle = GLES20.glGetUniformLocation(mProgram, "uLight.diffusion");
-        mSpecularHandle = GLES20.glGetUniformLocation(mProgram, "uLight.specular");
 
         mMaterialAmbientHandle = GLES20.glGetUniformLocation(mProgram, "uMaterial.ambient");
         mMaterialDiffusionHandle = GLES20.glGetUniformLocation(mProgram, "uMaterial.diffusion");
@@ -129,9 +123,7 @@ public class ShadowTexture {
 
         mTextureSamplerHandle = GLES20.glGetUniformLocation(mProgram, "uTextureSampler");
 
-        mLightVPMatrixHandle = GLES20.glGetUniformLocation(mProgram, "uShadow.lightVPMatrix");
-        mShadowDepthMapHandle = GLES20.glGetUniformLocation(mProgram, "uShadow.shadowMap");
-
+        mShadowNumberHandle = GLES20.glGetUniformLocation(mProgram, "uShadowNumber");
 
         /** Setup material */
         mMaterial.ambient = new float[] {1, 1, 1, 1};
@@ -152,9 +144,7 @@ public class ShadowTexture {
         return mMaterial;
     }
 
-    public void draw(float[] vpMatrix, float[] moduleMatrix, float[] eyePosition, ShadowEffectData shadowEffectData) {
-        Light light = shadowEffectData.light;
-
+    public void draw(float[] vpMatrix, float[] moduleMatrix, float[] eyePosition, ShadowEffectData[] shadowEffectDatas) {
         GLES20.glUseProgram(mProgram);
         GLES20.glEnableVertexAttribArray(mPositionHandle);
         GLES20.glEnableVertexAttribArray(mTextureCoordHandle);
@@ -162,8 +152,6 @@ public class ShadowTexture {
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, mVertexGLBuffer[0]);
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mGLTextures[0]);
-        GLES20.glActiveTexture(GLES20.GL_TEXTURE1);
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, shadowEffectData.shadow.getDepthMap());
         GLES20.glBindBuffer(GLES20.GL_ELEMENT_ARRAY_BUFFER, mIndexGLBuffer[0]);
 
         GLES20.glUniformMatrix4fv(mVPMatrixHandle, 1, false, vpMatrix, 0);
@@ -173,10 +161,6 @@ public class ShadowTexture {
         GLES20.glVertexAttribPointer(mNormalHandle, NORMAL_DATA_SIZE, GLES20.GL_FLOAT, false, VERTEX_DATA_STRIDE, NORMAL_OFFSET);
 
         GLES20.glUniform3fv(mEyePositionHandle, 1, eyePosition, 0);
-        GLES20.glUniform4fv(mLightPositionHandle, 1, light.position, 0);
-        GLES20.glUniform4fv(mAmbientHandle, 1, light.ambientChannel, 0);
-        GLES20.glUniform4fv(mDiffusionHandle, 1, light.diffusionChannel, 0);
-        GLES20.glUniform4fv(mSpecularHandle, 1, light.specularChannel, 0);
 
         GLES20.glUniform4fv(mMaterialAmbientHandle, 1, mMaterial.ambient, 0);
         GLES20.glUniform4fv(mMaterialDiffusionHandle, 1, mMaterial.diffusion, 0);
@@ -185,8 +169,30 @@ public class ShadowTexture {
 
         GLES20.glUniform1i(mTextureSamplerHandle, 0);
 
-        GLES20.glUniformMatrix4fv(mLightVPMatrixHandle, 1, false, shadowEffectData.lightVPMatrix, 0);
-        GLES20.glUniform1i(mShadowDepthMapHandle, 1);
+        for (int i = 0; i < shadowEffectDatas.length && i < MAX_NUMBER_OF_SHADOW; i++) {
+            ShadowEffectData shadowEffectData = shadowEffectDatas[i];
+            Light light = shadowEffectData.light;
+
+            GLES20.glActiveTexture(GLES20.GL_TEXTURE1 + i);
+            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, shadowEffectData.shadow.getDepthMap());
+
+            int lightVPMatrixHandle = GLES20.glGetUniformLocation(mProgram, String.format("uShadow[%d].lightVPMatrix", i));
+            // WAR for glsl: opaque type in array of struct cause shader compiling failed...
+//            int shadowDepthMapHandle = GLES20.glGetUniformLocation(mProgram, String.format("uShadow[%d].shadowMap", i));
+            int shadowDepthMapHandle = GLES20.glGetUniformLocation(mProgram, String.format("uShadowMap[%d]", i));
+            int lightPositionHandle = GLES20.glGetUniformLocation(mProgram, String.format("uShadow[%d].light.position", i));
+            int ambientHandle = GLES20.glGetUniformLocation(mProgram, String.format("uShadow[%d].light.ambient", i));
+            int diffusionHandle = GLES20.glGetUniformLocation(mProgram, String.format("uShadow[%d].light.diffusion", i));
+            int specularHandle = GLES20.glGetUniformLocation(mProgram, String.format("uShadow[%d].light.specular", i));
+
+            GLES20.glUniformMatrix4fv(lightVPMatrixHandle, 1, false, shadowEffectData.lightVPMatrix, 0);
+            GLES20.glUniform1i(shadowDepthMapHandle, 1 + i);
+            GLES20.glUniform4fv(lightPositionHandle, 1, light.position, 0);
+            GLES20.glUniform4fv(ambientHandle, 1, light.ambientChannel, 0);
+            GLES20.glUniform4fv(diffusionHandle, 1, light.diffusionChannel, 0);
+            GLES20.glUniform4fv(specularHandle, 1, light.specularChannel, 0);
+        }
+        GLES20.glUniform1i(mShadowNumberHandle, shadowEffectDatas.length);
 
         GLES20.glDrawElements(GLES20.GL_TRIANGLES, INDEX_DATA.length, GLES20.GL_UNSIGNED_BYTE, 0);
 

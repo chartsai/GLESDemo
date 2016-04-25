@@ -56,6 +56,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
             new Sample("GLES 2.0 Portal Sample", GLES2_Portal_Activity.class),
             new Sample("GLES 2.0 Mirror Sample", GLES2_Mirror_Activity.class),
             new Sample("GLES 2.0 Shadow Samples", ShadowActivity.class),
+            new Sample("GLES 2.0 Post-Processing Sample", GLES2_Post_Processing_Activity.class),
     };
 
     @Override

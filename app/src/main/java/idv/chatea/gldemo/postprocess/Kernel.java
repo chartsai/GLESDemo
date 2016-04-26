@@ -85,4 +85,14 @@ public class Kernel {
             }
         }
     }
+
+    /**
+     * Set all slot as the specify value
+     * @param value the value for all
+     */
+    public void setAll(float value) {
+        for (int i = 0; i < mKernelMatrix.length; i++) {
+            mKernelMatrix[i] = value;
+        }
+    }
 }

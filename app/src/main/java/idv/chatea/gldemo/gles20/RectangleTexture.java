@@ -27,10 +27,10 @@ public class RectangleTexture {
             "}";
 
     private static final float[] VERTEX_DATA = {
-            -1, -1, 0, 0, 1, // left-bottom corner
-            1, -1, 0, 1, 1, // right-bottom corner
-            -1, 1, 0, 0, 0, // left-top corner
-            1, 1, 0, 1, 0, // right-top corner
+            -0.5f, -0.5f, 0, 0, 1, // left-bottom corner
+             0.5f, -0.5f, 0, 1, 1, // right-bottom corner
+            -0.5f,  0.5f, 0, 0, 0, // left-top corner
+             0.5f,  0.5f, 0, 1, 0, // right-top corner
     };
 
     private static final int BYTES_PER_FLOAT = Float.SIZE / Byte.SIZE;
@@ -61,7 +61,19 @@ public class RectangleTexture {
     public RectangleTexture(Bitmap bitmap) {
         init();
 
-        GLES20.glGenTextures(1, mGLTexture, 0);
+        setPicture(bitmap);
+    }
+
+    public RectangleTexture(int textureId) {
+        init();
+
+        mGLTexture[0] = textureId;
+    }
+
+    public void setPicture(Bitmap bitmap) {
+        if (!GLES20.glIsTexture(mGLTexture[0])) {
+            GLES20.glGenTextures(1, mGLTexture, 0);
+        }
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mGLTexture[0]);
 
         GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR);
@@ -72,12 +84,6 @@ public class RectangleTexture {
         GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0);
 
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
-    }
-
-    public RectangleTexture(int textureId) {
-        init();
-
-        mGLTexture[0] = textureId;
     }
 
     private void init() {

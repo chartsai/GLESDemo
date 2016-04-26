@@ -62,6 +62,7 @@
         <activity android:name=".GLES2_Multiple_Shadows_Activity" />
         <activity android:name=".GLES2_Self_Shadow_Object_Activity" />
         <activity android:name=".GLES2_Shadow_on_Object_Activity" />
+        <activity android:name=".GLES2_Image_Processing_Activity" />
         <activity android:name=".GLES2_Post_Processing_Activity" />
     </application>
 

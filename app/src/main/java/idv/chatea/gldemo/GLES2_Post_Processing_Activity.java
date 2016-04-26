@@ -10,6 +10,10 @@ import android.opengl.Matrix;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -19,9 +23,9 @@ import idv.chatea.gldemo.lighting.Light;
 import idv.chatea.gldemo.lighting.LightObjObject;
 import idv.chatea.gldemo.objloader.BasicObjLoader;
 import idv.chatea.gldemo.objloader.SmoothObjLoader;
-import idv.chatea.gldemo.postprocess.KernelPostProcessing;
 import idv.chatea.gldemo.postprocess.FrameBuffer;
 import idv.chatea.gldemo.postprocess.Kernel;
+import idv.chatea.gldemo.postprocess.KernelPostProcessing;
 import idv.chatea.gldemo.shadow.Shadow;
 import idv.chatea.gldemo.shadow.ShadowEffectData;
 import idv.chatea.gldemo.shadow.ShadowTexture;
@@ -29,11 +33,64 @@ import idv.chatea.gldemo.shadow.ShadowTexture;
 /**
  * Used to demo how to post-processing your scene.
  * The key point is render on Framebuffer object (FBO) and then do image processing on the texture.
+ *
+ * @see GLES2_Image_Processing_Activity
  */
 public class GLES2_Post_Processing_Activity extends AppCompatActivity {
 
     private GLSurfaceView mGLSurfaceView;
     private MyRenderer mRenderer;
+
+    private Spinner mEffectSelectorSpinner;
+
+    private static final String[] KERNEL_EFFECT_LIST = {
+            "Identity",
+            "Edge Detection 1",
+            "Edge Detection 2",
+            "Edge Detection 3",
+            "Sharpen",
+            "Box Blur",
+            "Gaussian Blur",
+            "5x5 Unsharp",
+    };
+
+    private static final Kernel[] KERNELS = new Kernel[8];
+    static {
+        // identity
+        KERNELS[0] = new Kernel(new float[] {0, 1, 0}, new float[] {0, 1, 0});
+        // edge detection 1
+        KERNELS[1] = new Kernel(new float[] {1, 0, -1}, new float[] {1, 0, -1});
+        // edge detection 2
+        KERNELS[2] = new Kernel(3);
+        KERNELS[2].setValue(0, 1, 1);
+        KERNELS[2].setValue(1, 0, 1);
+        KERNELS[2].setValue(1, 1, -4);
+        KERNELS[2].setValue(1, 2, 1);
+        KERNELS[2].setValue(2, 1, 1);
+        // edge detection 3
+        KERNELS[3] = new Kernel(3);
+        KERNELS[3].setAll(-1);
+        KERNELS[3].setValue(1, 1, 8);
+        // Sharpen
+        KERNELS[4] = new Kernel(3);
+        KERNELS[4].setValue(0, 1, -1);
+        KERNELS[4].setValue(1, 0, -1);
+        KERNELS[4].setValue(1, 1, 5);
+        KERNELS[4].setValue(1, 2, -1);
+        KERNELS[4].setValue(2, 1, -1);
+        // Box Blur
+        KERNELS[5] = new Kernel(3);
+        KERNELS[5].setAll(1);
+        KERNELS[5].setConstFactor(1 / 9f);
+
+        // Gaussian Blur
+        KERNELS[6] = new Kernel(new float[] {1, 2, 1}, new float[] {1, 2, 1});
+        KERNELS[6].setConstFactor(1 / 16f);
+        // 5x5 Unsharp"
+        KERNELS[7] = new Kernel(new float[] {1, 4, 6, 4, 1}, new float[] {1, 4, 6, 4, 1});
+        KERNELS[7].setValue(2, 2, -476);
+        KERNELS[7].setConstFactor(-1 / 256f);
+    }
 
     private float mPreviousX;
     private float mPreviousY;
@@ -41,7 +98,8 @@ public class GLES2_Post_Processing_Activity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mGLSurfaceView = new GLSurfaceView(this);
+        setContentView(R.layout.activity_gles2_post_processing);
+        mGLSurfaceView = (GLSurfaceView) findViewById(R.id.glSurfaceView);
         mGLSurfaceView.setEGLContextClientVersion(2);
         // Just in case... explicitly specify using alpha bit.
         mGLSurfaceView.getHolder().setFormat(PixelFormat.TRANSLUCENT);
@@ -51,7 +109,26 @@ public class GLES2_Post_Processing_Activity extends AppCompatActivity {
         mRenderer = new MyRenderer();
         mGLSurfaceView.setRenderer(mRenderer);
         mGLSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
-        setContentView(mGLSurfaceView);
+
+        mEffectSelectorSpinner = (Spinner) findViewById(R.id.effectSelector);
+        mEffectSelectorSpinner.setAdapter(new ArrayAdapter(this, android.R.layout.simple_spinner_item, KERNEL_EFFECT_LIST));
+        mEffectSelectorSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, final int position, long id) {
+                mGLSurfaceView.queueEvent(new Runnable() {
+                    @Override
+                    public void run() {
+                        mRenderer.setKernel(KERNELS[position]);
+                        mGLSurfaceView.requestRender();
+                    }
+                });
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+        mEffectSelectorSpinner.setSelection(0);
     }
 
     @Override
@@ -128,6 +205,7 @@ public class GLES2_Post_Processing_Activity extends AppCompatActivity {
 
         private FrameBuffer mPreProcessingFrame;
 
+        private float[] mPostMVP = new float[16];
         private KernelPostProcessing mKernelPostProcessing;
         private Kernel mKernel;
 
@@ -162,17 +240,11 @@ public class GLES2_Post_Processing_Activity extends AppCompatActivity {
             mDesktop = new Desktop(context, bitmap);
             bitmap.recycle();
             Matrix.setIdentityM(mDesktopModule, 0);
-
-            mKernel = new Kernel(3);
-            mKernel.setValue(0, 1, 1 * 9);
-            mKernel.setValue(1, 0, 1 * 9);
-            mKernel.setValue(1, 1, -4 * 9);
-            mKernel.setValue(1, 2, 1 * 9);
-            mKernel.setValue(2, 1, 1 * 9);
         }
 
-        private int mWidth;
-        private int mHeight;
+        public void setKernel(Kernel kernel) {
+            mKernel = kernel;
+        }
 
         @Override
         public void onSurfaceChanged(GL10 unused, int width, int height) {
@@ -182,14 +254,28 @@ public class GLES2_Post_Processing_Activity extends AppCompatActivity {
             Matrix.frustumM(mProjectMatrix, 0, -ratio * mViewDistance / 4, ratio * mViewDistance / 4,
                     -1 * mViewDistance / 4, 1 * mViewDistance / 4, mViewDistance, mViewDistance * 3);
 
-            mWidth = width;
-            mHeight = height;
-
             mShadow = new Shadow(width, height);
             mPreProcessingFrame = new FrameBuffer(width, height);
-            mKernelPostProcessing = new KernelPostProcessing(GLES2_Post_Processing_Activity.this, mPreProcessingFrame);
 
-            mKernelPostProcessing.setSamplingStep(3);
+            float[] mPostProcessingProject = new float[16];
+            float[] mPostProcessingView = new float[16];
+            float[] mPostProcessingModule = new float[16];
+
+            /** Setup postprocessing view */
+
+            Matrix.orthoM(mPostProcessingProject, 0, -width / 2, width / 2, -height / 2, height / 2, 0, 2);
+            Matrix.setLookAtM(mPostProcessingView, 0,
+                    0, 0, 1,
+                    0, 0, 0,
+                    0, 1, 0);
+            Matrix.setIdentityM(mPostProcessingModule, 0);
+            Matrix.scaleM(mPostProcessingModule, 0, width, height, 1);
+
+            Matrix.multiplyMM(mPostMVP, 0, mPostProcessingProject, 0, mPostProcessingView, 0);
+            Matrix.multiplyMM(mPostMVP, 0, mPostMVP, 0, mPostProcessingModule, 0);
+
+            mKernelPostProcessing = new KernelPostProcessing(GLES2_Post_Processing_Activity.this, mPreProcessingFrame);
+            mKernelPostProcessing.setSamplingStep(1);
         }
 
         @Override
@@ -237,9 +323,8 @@ public class GLES2_Post_Processing_Activity extends AppCompatActivity {
 
             mShadow.stopDrawShadowTexture();
 
-
             /**
-             * Render all scene.
+             * Render all scene, on framebuffer.
              */
             mPreProcessingFrame.bind();
             GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
@@ -252,32 +337,17 @@ public class GLES2_Post_Processing_Activity extends AppCompatActivity {
             mSkybox.draw(vpMatrix, mSkyboxModule);
             mPreProcessingFrame.unbind();
 
-
             /**
-             * post-processing the bloom effect.
+             * post-processing the texture on framebuffer.
              */
+            if (mKernel == null) {
+                return;
+            }
             boolean[] depthTested = new boolean[1];
             GLES20.glGetBooleanv(GLES20.GL_DEPTH_TEST, depthTested, 0);
             GLES20.glDisable(GLES20.GL_DEPTH_TEST);
 
-            // TODO move all post processing attribute to surface change.
-            float[] postProcessingProject = new float[16];
-            float[] postProcessingView = new float[16];
-            float[] postProcessingModule = new float[16];
-
-            Matrix.orthoM(postProcessingProject, 0, -mWidth / 2, mWidth / 2, -mHeight / 2, mHeight / 2, 0, 2);
-            Matrix.setLookAtM(postProcessingView, 0,
-                    0, 0, 1,
-                    0, 0, 0,
-                    0, 1, 0);
-            Matrix.setIdentityM(postProcessingModule, 0);
-            Matrix.scaleM(postProcessingModule, 0, mWidth, mHeight, 1);
-
-            float[] postMVP = new float[16];
-            Matrix.multiplyMM(postMVP, 0, postProcessingProject, 0, postProcessingView, 0);
-            Matrix.multiplyMM(postMVP, 0, postMVP, 0, postProcessingModule, 0);
-
-            mKernelPostProcessing.draw(postMVP, mKernel);
+            mKernelPostProcessing.draw(mPostMVP, mKernel);
 
             if (depthTested[0]) {
                 GLES20.glEnable(GLES20.GL_DEPTH_TEST);

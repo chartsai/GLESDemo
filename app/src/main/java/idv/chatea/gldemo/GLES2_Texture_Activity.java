@@ -53,7 +53,7 @@ public class GLES2_Texture_Activity extends AppCompatActivity {
             GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
 
             Matrix.setLookAtM(mViewMatrix, 0,
-                    0f, 0f, 5f,
+                    0f, 0f, 2f,
                     0f, 0f, 0f,
                     0f, 1f, 0);
 
